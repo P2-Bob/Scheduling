@@ -29,7 +29,7 @@ const randomEmployee = (amountOfWorkers, worker, schedule, day, shift) => {
             //console.log('1' , Object.entries(obj)[0].flat());
 
 
-            //sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter, shift);
+            sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter, shift);
 
 
         }
@@ -59,16 +59,24 @@ const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) =>
 
 
 const sameEmployeeCheckDay = (schedule, day, pickEmployee, amountOfWorkersCounter, shift) => {
-    schedule[day].includes(pickEmployee[amountOfWorkersCounter])
+    
+    //schedule[day].includes(pickEmployee[amountOfWorkersCounter])
+    console.log("se her:", schedule[day])
+    console.log("se her1:", shift)
+    let tempshift = shifts[shifts.indexOf(shift) - 1];
 
+    console.log(pickEmployee[amountOfWorkersCounter])
+    if (schedule[day][tempshift]) {
+        console.log("se her2:", schedule[day]['6-14'].includes(pickEmployee[amountOfWorkersCounter]))
+    }
 
-    if (shiftAlreadyScheduled) {
+    /* if (shiftAlreadyScheduled) {
         pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)];
         sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter);
         console.log('alreadyscheduled');
     } else {
         console.log('notscheduled');
-    };
+    }; */
 }
 
 
