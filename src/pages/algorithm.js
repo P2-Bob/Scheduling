@@ -10,16 +10,67 @@ const randomEmployee = (amountOfWorkers, worker, schedule, day, shift) => {
     for (let amountOfWorkersCounter = 0; amountOfWorkersCounter < amountOfWorkers; amountOfWorkersCounter++) {
 
         pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)];
-        
-        let sameEmployeeCheckInterval = 1;
-        while (pickEmployee[amountOfWorkersCounter] === pickEmployee[amountOfWorkersCounter - sameEmployeeCheckInterval]) {
-            pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)];
-            sameEmployeeCheckInterval++;
+
+
+        validCount = 0
+        validEmployee = false;
+        while (!validEmployee) {
+            if (schedule[day].includes(pickEmployee[amountOfWorkersCounter])) {
+                console.log('alreadyscheduled');
+            }
+            validEmployee = sameEmployeeCheckShift(pickEmployee, amountOfWorkersCounter, worker);
+
+            let obj = schedule[day]
+            if (schedule.hasOwnProperty(day) && schedule[day].hasOwnProperty(shift)) {
+                const arr = Object.entries(schedule[day][shift])[0][1];
+                console.log(arr.flat());
+              }
+            
+            //console.log('1' , Object.entries(obj)[0].flat());
+
+
+            //sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter, shift);
+
+
         }
     }
 
     return pickEmployee
 }
+
+
+const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) => {
+    localValidEmployee = false;
+    while (!localValidEmployee) {
+        let tempCheck = 0;
+        for (let sameEmployeeCheckInterval = 1; sameEmployeeCheckInterval < amountOfWorkers; sameEmployeeCheckInterval++) {
+            if (pickEmployee[amountOfWorkersCounter] === pickEmployee[amountOfWorkersCounter - sameEmployeeCheckInterval]) {
+                tempCheck++;
+                pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)];
+                sameEmployeeCheckInterval++;
+            }
+        }
+        if (tempCheck === 0) {
+            localValidEmployee = true;
+        } else sameEmployeeCheckShift(pickEmployee, amountOfWorkersCounter, worker);
+    }
+    return true;
+}
+
+
+const sameEmployeeCheckDay = (schedule, day, pickEmployee, amountOfWorkersCounter, shift) => {
+    schedule[day].includes(pickEmployee[amountOfWorkersCounter])
+
+
+    if (shiftAlreadyScheduled) {
+        pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)];
+        sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter);
+        console.log('alreadyscheduled');
+    } else {
+        console.log('notscheduled');
+    };
+}
+
 
 const randomSchedule = () => {
     const schedule = {};
