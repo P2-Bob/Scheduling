@@ -67,7 +67,7 @@ const sameEmployeeCheckDay = (schedule, day, pickEmployee, amountOfWorkersCounte
 
     console.log(pickEmployee[amountOfWorkersCounter])
     if (schedule[day][tempshift]) {
-        console.log("se her2:", schedule[day]['6-14'].includes(pickEmployee[amountOfWorkersCounter]))
+        console.log("se her2:", schedule[day][tempshift].includes(pickEmployee[amountOfWorkersCounter]))
     }
 
     /* if (shiftAlreadyScheduled) {
