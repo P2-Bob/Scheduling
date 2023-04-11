@@ -18,12 +18,12 @@ export default async function handler(req, res) {
             return;
         }
 
-        const { username, password, name, role, age, department } = req.body;
+        const { username, password, name, initials, role, age, department } = req.body;
 
         try {
             const result = await executeQuery({
-                query: 'INSERT INTO users (username, password, name, role, age, department) VALUES (?, ?, ?, ?, ?, ?)',
-                value: [username, password, name, role, age, department]
+                query: 'INSERT INTO users (username, password, name, initials, role, age, department) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                value: [username, password, name, initials, role, age, department]
             });
             res.status(200).json({ result: "User created" });
         } catch (error) {

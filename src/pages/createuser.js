@@ -46,6 +46,12 @@ export default function createuser() {
                 />
                 <input
                     type="text"
+                    name="initials"
+                    placeholder="Initials"
+                    required
+                />
+                <input
+                    type="text"
                     name="role"
                     placeholder="Role"
                     required

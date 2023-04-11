@@ -100,6 +100,12 @@ a {
   text-decoration: none;
 }
 
+header{
+  position: sticky;
+  z-index: 30;
+  top: 0;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
