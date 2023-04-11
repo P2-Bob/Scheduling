@@ -24,12 +24,11 @@ const randomEmployee = (amountOfWorkers, worker, schedule, day, shift) => {
             if (schedule.hasOwnProperty(day) && schedule[day].hasOwnProperty(shift)) {
                 const arr = Object.entries(schedule[day][shift])[0][1];
                 console.log(arr.flat());
-              }
-            
-            //console.log('1' , Object.entries(obj)[0].flat());
+            }
 
 
-            sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter, shift);
+
+            sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter, shift, worker);
 
 
         }
@@ -58,25 +57,31 @@ const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) =>
 }
 
 
-const sameEmployeeCheckDay = (schedule, day, pickEmployee, amountOfWorkersCounter, shift) => {
-    
-    //schedule[day].includes(pickEmployee[amountOfWorkersCounter])
-    console.log("se her:", schedule[day])
-    console.log("se her1:", shift)
+const sameEmployeeCheckDay = (schedule, day, pickEmployee, amountOfWorkersCounter, shift, worker) => {
+
+
     let tempshift = shifts[shifts.indexOf(shift) - 1];
 
-    console.log(pickEmployee[amountOfWorkersCounter])
-    if (schedule[day][tempshift]) {
-        console.log("se her2:", schedule[day][tempshift].includes(pickEmployee[amountOfWorkersCounter]))
-    }
+    localValidEmployee = false;
+    while (!localValidEmployee) {
+        let tempCheck = 0;
 
-    /* if (shiftAlreadyScheduled) {
-        pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)];
-        sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter);
-        console.log('alreadyscheduled');
-    } else {
-        console.log('notscheduled');
-    }; */
+        if (schedule[day][tempshift]) {
+            if (schedule[day][tempshift].includes(pickEmployee[amountOfWorkersCounter])) {
+                tempCheck++;
+                pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)];
+            }
+        }
+        if (sameEmployeeCheckShift(pickEmployee, amountOfWorkersCounter, worker)) {
+        } else {
+            tempCheck++;
+        }
+
+        if (tempCheck === 0) {
+            localValidEmployee = true;
+        } else sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter, shift, worker);
+
+    }
 }
 
 
