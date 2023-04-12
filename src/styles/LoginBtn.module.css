@@ -41,7 +41,7 @@
 
 .dropDown {
     position: absolute;
-    top: 4rem;
+    top: 10vh;
     right: 1rem;
     width: 10rem;
     background-color: #fff;
@@ -49,6 +49,7 @@
     border-radius: 0.5rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     z-index: 100;
+    overflow: hidden;
 }
 
 .dropDownItem {

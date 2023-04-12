@@ -1,11 +1,9 @@
 import Link from "next/link";
-import React, { useState } from "react";
 import styles from "@/styles/Navbar.module.css";
 import Loginbtn from "./loginBtn";
 
 
 const Navbar = () => {
-  const [navActive, setNavActive] = useState(false);
 
   return (
     <div className={styles.navBar}>
