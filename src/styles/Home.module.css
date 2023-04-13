@@ -8,48 +8,6 @@
   background-color: #f0f0f0;
 }
 
-.yourShifts {
-  align-self: center;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 1100px;
-  padding: 1rem;
-  margin: 2rem;
-  width: 30%;
-}
-
-.shiftsTitle {
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-}
-
-.shiftsTitle > h3 {
-  font-weight: 400;
-  color: #37b0f7;
-  cursor: pointer;
-}
-
-.shifts {
-  width: 100%;
-  margin: 0.5rem 0 ;
-}
-
-.shift {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-  width: 100%;
-  gap: 1rem;
+.calendar {
+  width: 50%;
 }

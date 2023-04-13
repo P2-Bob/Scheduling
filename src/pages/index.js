@@ -8,6 +8,10 @@ import Navbar from './components/navBar'
 import { getSession } from 'next-auth/react'
 import { executeQuery } from "../../lib/db"
 
+import FullCalendar from '@fullcalendar/react' // must go before plugins
+import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
+import timeGridPlugin from '@fullcalendar/timegrid' // a plugin!
+
 export async function getServerSideProps(ctx) {
 
   const session = await getSession(ctx);
@@ -28,12 +32,11 @@ export async function getServerSideProps(ctx) {
           },
       }
   } else {
-      return {
-          redirect: {
-              destination: '/',
-              permanent: false,
-          },
-      }
+    return {
+      props: {
+        result: null,
+      },
+    }
   }
 }
 
@@ -49,48 +52,15 @@ export default function Home({ result }) {
       </Head>
       <Navbar initials={result[0].initials} />
       <div className={styles.main}>
-        <div className={styles.yourShifts}>
-          <div className={styles.shiftsTitle}>
-            <h1>Upcoming shifts</h1>
-            <h3>Show all (10)</h3>
-          </div>
-          <hr />
-          <div className={styles.shifts}>
-            <div className={styles.shift}>
-              <div className={styles.shiftDate}>
-                <h3>12/04/23</h3>
-                <h3>Wednesday</h3>
-              </div>
-              <div className={styles.shiftInfo}>
-                <h3>08:00 - 16:00</h3>
-                <h3>Cashier</h3>
-              </div>
-            </div>
-          </div>
-          <div className={styles.shifts}>
-            <div className={styles.shift}>
-              <div className={styles.shiftDate}>
-                <h3>13/04/23</h3>
-                <h3>Thursday</h3>
-              </div>
-              <div className={styles.shiftInfo}>
-                <h3>08:00 - 16:00</h3>
-                <h3>Cashier</h3>
-              </div>
-            </div>
-          </div>
-          <div className={styles.shifts}>
-            <div className={styles.shift}>
-              <div className={styles.shiftDate}>
-                <h3>14/04/23</h3>
-                <h3>Friday</h3>
-              </div>
-              <div className={styles.shiftInfo}>
-                <h3>08:00 - 16:00</h3>
-                <h3>Cashier</h3>
-              </div>
-            </div>
-          </div>
+        <div className={styles.calendar}>
+          <FullCalendar
+            plugins={[timeGridPlugin]}
+            initialView="timeGridWeek"
+            events={[
+              { title: 'event 1', date: '2023-04-13' },
+              { title: 'event 2', date: '2023-04-20' }
+            ]}
+          />
         </div>
       </div>
     </>

@@ -26,10 +26,9 @@ export async function getServerSideProps(ctx) {
         }
     } else {
         return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
+          props: {
+            result: null,
+          },
         }
     }
 }
