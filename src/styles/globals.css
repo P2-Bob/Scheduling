@@ -25,3 +25,9 @@ header{
   z-index: 30;
   top: 0;
 }
+
+hr {
+  width: 100%;
+  border: 1px solid #37b0f7;
+  margin: 0.5rem 0;
+}

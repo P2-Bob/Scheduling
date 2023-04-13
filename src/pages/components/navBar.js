@@ -3,7 +3,7 @@ import styles from "@/styles/Navbar.module.css";
 import Loginbtn from "./loginBtn";
 
 
-const Navbar = () => {
+const Navbar = ({ initials }) => {
 
   return (
     <div className={styles.navBar}>
@@ -23,7 +23,7 @@ const Navbar = () => {
                 Admin
             </Link>
         </div>
-        <Loginbtn/>
+        <Loginbtn initials={initials} />
     </div>
   );
 };

@@ -4,7 +4,9 @@ import { AiOutlineDown } from "react-icons/ai"
 import { useState } from "react"
 import Link from "next/link"
 
-export default function Component() {
+
+
+export default function Component({ initials }) {
   const { data: session } = useSession()
   const [profileDropDown, setProfileDropDown] = useState(false)
 
@@ -16,8 +18,6 @@ export default function Component() {
     setProfileDropDown(false);
   }
 
-
-
   if (session) {
     return (
       <div className={styles.loggedIn} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -26,7 +26,7 @@ export default function Component() {
         </p>
         <AiOutlineDown className={styles.icon} />
         <div className={styles.avatar}>
-          AC
+          {initials}
         </div>
         { profileDropDown &&
         <div className={styles.dropDown}>
