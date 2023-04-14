@@ -7,10 +7,21 @@ import Loginbtn from './components/loginBtn'
 import Navbar from './components/navBar'
 import { getSession } from 'next-auth/react'
 import { executeQuery } from "../../lib/db"
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
 
-import FullCalendar from '@fullcalendar/react' // must go before plugins
-import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-import timeGridPlugin from '@fullcalendar/timegrid' // a plugin!
+const mySchedule = [
+  { title: 'Shift from 8:00-16:00 department: Cashier', date: '2023-04-01' },
+  { title: 'Shift from 16:00-22:00 department: Cashier', date: '2023-04-04' },
+  { title: 'Shift from 16:00-22:00 department: Floor', date: '2023-04-07' },
+  { title: 'Shift from 8:00-16:00 department: Fruit & Green', date: '2023-04-08' },
+  { title: 'Shift from 16:00-22:00 department: Floor', date: '2023-04-10' },
+  { title: 'Shift from 8:00-16:00 department: Fruit & Green', date: '2023-04-15' },
+  { title: 'Shift from 16:00-22:00 department: Fruit & Green', date: '2023-04-18' },
+  { title: 'Shift from 8:00-16:00 department: Floor', date: '2023-04-23' },
+  { title: 'Shift from 8:00-16:00 department: Cashier', date: '2023-04-27' },
+  { title: 'Shift from 16:00-22:00 department: Floor', date: '2023-04-30' },
+]
 
 export async function getServerSideProps(ctx) {
 
@@ -54,12 +65,12 @@ export default function Home({ result }) {
       <div className={styles.main}>
         <div className={styles.calendar}>
           <FullCalendar
-            plugins={[timeGridPlugin]}
-            initialView="timeGridWeek"
-            events={[
-              { title: 'event 1', date: '2023-04-13' },
-              { title: 'event 2', date: '2023-04-20' }
-            ]}
+            plugins={[dayGridPlugin]}
+            initialView="dayGridMonth"
+            height={"100%"}
+            events={mySchedule}
+            eventClassNames={styles.event}
+            dayHeaderFormat={{ weekday: 'long' }}
           />
         </div>
       </div>
