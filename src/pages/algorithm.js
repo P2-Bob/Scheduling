@@ -4,6 +4,16 @@ const shifts = ['6-14', '14-22', '22-6'];
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 let amountOfWorkers = 6;
 
+const unavailableEmployees = {
+    "Monday": [],
+    "Tuesday": [],
+    "Wednesday": [],
+    "Thursday": [],
+    "Friday": [],
+    "Saturday": [],
+    "Sunday": [],
+}
+
 const randomEmployee = (amountOfWorkers, worker, schedule, day, shift) => {
     let pickEmployee = []
 
@@ -94,11 +104,18 @@ const randomSchedule = () => {
 
         for (let shiftsLength = 0; shiftsLength < shifts.length; shiftsLength++) {
             const shift = shifts[shiftsLength];
-            schedule[day][shift] = randomEmployee(amountOfWorkers, employees, schedule, day, shift);
+            
+            
+            const pickedEmployee = randomEmployee(amountOfWorkers, employees, schedule, day, shift);
+
+            schedule[day][shift] = pickedEmployee;
+
+            unavailableEmployees[day] = unavailableEmployees[day].concat(pickedEmployee);
+            console.log("se her: ", unavailableEmployees);
 
         }
     }
-
+    console.log("Kig her: ", unavailableEmployees);
     return schedule;
 }
 
