@@ -44,6 +44,16 @@ const randomEmployee = (amountOfWorkers, worker, schedule, day, shift) => {
         }
       }
 
+      if (day === 'Saturday' || day === 'Sunday') {
+        temprandom = Math.floor(Math.random() * 2);
+
+        if (temprandom === 0) {
+          pickEmployee[amountOfWorkersCounter] = youthemployees[Math.floor(Math.random() * worker.length)];
+        } else {
+          pickEmployee[amountOfWorkersCounter] = employees[Math.floor(Math.random() * worker.length)];
+        }
+      }
+
       if (schedule[day].includes(pickEmployee[amountOfWorkersCounter])) {
         console.log('alreadyscheduled');
       }
