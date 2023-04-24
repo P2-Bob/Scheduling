@@ -2,6 +2,7 @@
 
 import { getServerSession } from "next-auth"
 import { authOptions } from "./auth/[...nextauth]"
+import { executeQuery } from "../../../lib/db"
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions)
@@ -11,6 +12,12 @@ export default async function handler(req, res) {
     return
   } else {
     console.log(session)
-    res.status(200).json({ result: "Hej med dig du har adgang :)", username: session.user.name })
+
+    const result = await executeQuery({
+      query: 'SELECT * FROM users',
+      value: []
+    });
+    console.log(result[4])
+    res.status(200).json({ result: result})
   }
 }
