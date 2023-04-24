@@ -6,7 +6,7 @@ import Link from "next/link"
 
 
 
-export default function Component({ initials }) {
+export default function Component({ initials, name }) {
   const { data: session } = useSession()
   const [profileDropDown, setProfileDropDown] = useState(false)
 
@@ -22,7 +22,7 @@ export default function Component({ initials }) {
     return (
       <div className={styles.loggedIn} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <p className={styles.name}>
-          {session.user.name}
+          {name}
         </p>
         <AiOutlineDown className={styles.icon} />
         <div className={styles.avatar}>

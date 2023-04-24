@@ -42,7 +42,7 @@ export default function Profile({ result }) {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Navbar initials={result[0].initials} />
+            <Navbar initials={result[0].initials} name={result[0].name} />
             <div className={styles.main}>
                 <div className={styles.profile}>
                     <div className={styles.avatar}>
