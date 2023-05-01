@@ -1,9 +1,13 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Navbar from './components/navBar'
-import styles from '@/styles/Profile.module.css'
+import styles from '@/styles/Admin.module.css'
 import { executeQuery } from '../../lib/db'
 import { getSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import Link from "next/link";
 
 export async function getServerSideProps(ctx) {
 
@@ -34,27 +38,66 @@ export async function getServerSideProps(ctx) {
 }
 
 export default function Profile({ result }) {
-    return (
-        <>
-            <Head>
-                <title>My Website - Admin</title>
-                <meta name="description" content="Admin page" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <Navbar initials={result[0].initials} name={result[0].name} />
-            <div className={styles.main}>
-                <div className={styles.profile}>
-                    <div className={styles.avatar}>
-                        {result[0].initials}
-                    </div>
-                    <div className={styles.info}>
-                        <h1>{result[0].name}</h1>
-                        <h2>Department: {result[0].department}</h2>
-                        <h2>Age: {result[0].age}</h2>
+
+    const { data: session } = useSession();
+    let unAuthorized = true;
+    if (session) {
+        if (result[0].role != 'admin') {
+            unAuthorized = true;
+        } else {
+            unAuthorized = false;
+        }
+    }
+
+    const router = useRouter();
+    const { status: sessionStatus } = useSession();
+    const loading = sessionStatus === 'loading';
+
+    useEffect(() => {
+        // check if the session is loading or the router is not ready
+        if (loading || !router.isReady) return;
+
+        // if the user is not authorized, redirect to the front page
+        if (unAuthorized) {
+            console.log('not authorized');
+            router.push({
+              pathname: '/',
+            });
+          }
+
+    }, [loading, unAuthorized, sessionStatus, router]);
+
+    if (loading) {
+        return <>Loading app...</>;
+    }
+
+    if (!unAuthorized) {
+        return (
+            <>
+                <Head>
+                    <title>My Website - Admin</title>
+                    <meta name="description" content="Admin page" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <Navbar name={result[0].name} />
+                <div className={styles.main}>
+                    <h1>Administration Panel</h1>
+                    <p>Welcome to the admin panel, what do you wanna do?</p>
+                    <div className={styles.container}>
+                        <div className={styles.buttonContainer}>
+                            <Link href="/admin/employees" className={styles.button}>Manage Employees</Link>
+                            <p>Manage employees, add new employees, remove employees, edit employees, etc.</p>
+                        </div>
+                        <div className={styles.buttonContainer}>
+                            <Link href="/admin/schedule" className={styles.button}>Manage Work Schedule</Link>
+                            <p>Manage work schedule, add new work schedule, remove work schedule, edit work schedule, etc.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </>
-      )
+            </>
+        )
+    } else {
+        return <>unAuthorized</>;
+    }
 }

@@ -3,7 +3,13 @@ import styles from "@/styles/Navbar.module.css";
 import Loginbtn from "./loginBtn";
 
 
-const Navbar = ({ initials, name }) => {
+const Navbar = ({ name }) => {
+
+    // here we are getting the first and last initial of the user's name
+    const nameParts = name.split(" ");
+    const firstInitial = nameParts[0].charAt(0).toUpperCase();
+    const lastInitial = nameParts[nameParts.length - 1].charAt(0).toUpperCase();
+    const initials = firstInitial + lastInitial;
 
   return (
     <div className={styles.navBar}>

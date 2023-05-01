@@ -34,6 +34,13 @@ export async function getServerSideProps(ctx) {
 }
 
 export default function Profile({ result }) {
+
+    // here we are getting the first and last initial of the user's name
+    const nameParts = result[0].name.split(" ");
+    const firstInitial = nameParts[0].charAt(0).toUpperCase();
+    const lastInitial = nameParts[nameParts.length - 1].charAt(0).toUpperCase();
+    const initials = firstInitial + lastInitial;
+
     return (
         <>
             <Head>
@@ -42,11 +49,11 @@ export default function Profile({ result }) {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Navbar initials={result[0].initials} name={result[0].name} />
+            <Navbar name={result[0].name} />
             <div className={styles.main}>
                 <div className={styles.profile}>
                     <div className={styles.avatar}>
-                        {result[0].initials}
+                        {initials}
                     </div>
                     <div className={styles.info}>
                         <h1>{result[0].name}</h1>
