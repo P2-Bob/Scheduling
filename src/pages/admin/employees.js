@@ -63,11 +63,11 @@ export default function Profile({ users, departments }) {
     const [editingEmployee, setEditingEmployee] = useState(null);
 
 
-    const editEmployeeHandler = (username) => {
+    const editingEmployeeHandler = (username) => {
         setEditingEmployee(username);
     }
 
-    const handleRoleChange = (event, username) => {
+    const roleChangeHandler = (event, username) => {
         setSelectedRole({
             ...selectedRole,
             [username]: event.target.value,
@@ -75,18 +75,23 @@ export default function Profile({ users, departments }) {
     };
       
 
-    const handleDepartmentChange = (event, username) => {
+    const departmentChangeHandler = (event, username) => {
         setSelectedDepartment({
             ...selectedDepartment,
             [username]: event.target.value,
         });
     };
-      
-
     
 
+    const deleteEmployeeHandler = async (username) => {
+        // delete the employee from the employee array
 
-    const handleEditEmployee = async (event) => {
+        const updatedEmployees = employees.filter((user) => user.username !== username);
+        setEmployees(updatedEmployees);
+    };
+
+
+    const editEmployeeHandler = async (event) => {
         event.preventDefault();
 
         const name = event.target.name.value;
@@ -94,6 +99,19 @@ export default function Profile({ users, departments }) {
         const age = event.target.age.value;
         const departmentName = event.target.department.value;
         const role = event.target.role.value;
+
+        // check if the username is changed
+        if (username !== editingEmployee) {
+            // if so check if the username already exists
+            const usernameExists = employees.some(
+                (employee) => employee.username === username
+            );
+
+            if (usernameExists) {
+                alert('Username already taken!');
+                return;
+            }
+        }
 
         // get id of the department from the departments array
         const department_id = departments.find(
@@ -107,6 +125,24 @@ export default function Profile({ users, departments }) {
             query: 'UPDATE users SET name = ?, username = ?, age = ?, department_id = ?, role = ? WHERE username = ?',
             value: [name, username, age, department, role, editingEmployee]
         }) */
+
+        const result = await fetch('/api/updateEmployee', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: username,
+                name: name,
+                role: role,
+                age: age,
+                department_id: department_id,
+                editingEmployee: editingEmployee
+            })
+        });
+
+        if (!result.ok) {
+            alert('Something went wrong!');
+            return;
+        }
 
         // find the employee in the employees array and update it
         const updatedEmployees = employees.map((employee) => {
@@ -127,6 +163,8 @@ export default function Profile({ users, departments }) {
 
         // reset the editingEmployee state
         setEditingEmployee(null);
+
+        alert('Employee updated successfully!');
 
     }
 
@@ -189,7 +227,7 @@ export default function Profile({ users, departments }) {
                                     {editingEmployee === employee.username ? (
                                         <div className={styles.editEmployee}>
                                             <h2>Edit Employee</h2>
-                                            <form onSubmit={handleEditEmployee} >
+                                            <form onSubmit={editEmployeeHandler} >
                                                 <div className={styles.inputWrapper}>
                                                     <label htmlFor="name">Name</label>
                                                     <input type="text" id="name" name="name" placeholder={employee.name} defaultValue={employee.name} />
@@ -208,7 +246,7 @@ export default function Profile({ users, departments }) {
                                                         id="department"
                                                         name="department"
                                                         value={selectedDepartment[employee.username]}
-                                                        onChange={(event) => handleDepartmentChange(event, employee.username)}
+                                                        onChange={(event) => departmentChangeHandler(event, employee.username)}
                                                         >
                                                         {departments.map((department) => (
                                                             <option key={department.department_id} value={department.department_name}>
@@ -223,14 +261,14 @@ export default function Profile({ users, departments }) {
                                                         id="role"
                                                         name="role"
                                                         value={selectedRole[employee.username]}
-                                                        onChange={(event) => handleRoleChange(event, employee.username)}
+                                                        onChange={(event) => roleChangeHandler(event, employee.username)}
                                                         >
                                                         <option value="employee">Employee</option>
                                                         <option value="admin">Admin</option>
                                                     </select>
                                                 </div>
                                                 <div className={styles.editEmployeeButtons}>
-                                                    <button type="button" className={styles.editButtonBack} onClick={editEmployeeHandler}>Back</button>
+                                                    <button type="button" className={styles.editButtonBack} onClick={editingEmployeeHandler}>Back</button>
                                                     <button type="submit" className={styles.editButtonSubmit}>Submit</button>
                                                 </div>
                                             </form>
@@ -247,10 +285,10 @@ export default function Profile({ users, departments }) {
                                         <p><strong>Age:</strong> {employee.age}</p>
                                         <p><strong>Department:</strong> {departments.find(department => department.department_id === employee.department_id)?.department_name}</p>
                                         <div className={styles.employeeButtons}>
-                                            <button className={styles.editButton} onClick={() => editEmployeeHandler(employee.username)}>
+                                            <button className={styles.editButton} onClick={() => editingEmployeeHandler(employee.username)}>
                                                 Edit
                                             </button>
-                                            <button className={styles.deleteButton}>
+                                            <button className={styles.deleteButton} onClick={() => deleteEmployeeHandler(employee.username)}>
                                                 Delete
                                             </button>
                                         </div>
@@ -259,70 +297,6 @@ export default function Profile({ users, departments }) {
                                 </div>
                             ))
                         }
-                        
-                        
-                        
-                        {/* {editEmployee ? (
-                            <div className={styles.editEmployee}>
-                                <h2>Edit Employee</h2>
-                                <form onSubmit={handleEditEmployee} >
-                                    <div className={styles.inputWrapper}>
-                                        <label htmlFor="name">Name</label>
-                                        <input type="text" id="name" name="name" placeholder={users[0].name} />
-                                    </div>
-                                    <div className={styles.inputWrapper}>
-                                        <label htmlFor="username">Username</label>
-                                        <input type="text" id="username" name="username" placeholder={users[0].username} />
-                                    </div>
-                                    <div className={styles.inputWrapper}>
-                                        <label htmlFor="age">Age</label>
-                                        <input type="number" id="age" name="age" placeholder={users[0].age} />
-                                    </div>
-                                    <div className={styles.inputWrapper}>
-                                        <label htmlFor="department">Department</label>
-                                        <select id="department" name="department" value={selectedDepartment} onChange={handleDepartmentChange}>
-                                            {departments.map((department) => (
-                                                <option key={department.department_id} value={department.department_name}>
-                                                    {department.department_name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className={styles.inputWrapper}>
-                                        <label htmlFor="role">Role</label>
-                                        <select id="role" name="role" value={selectedRole} onChange={handleRoleChange}>
-                                            <option value="employee">Employee</option>
-                                            <option value="admin">Admin</option>
-                                        </select>
-                                    </div>
-                                    <div className={styles.editEmployeeButtons}>
-                                        <button type="button" className={styles.editButtonBack} onClick={editEmployeeHandler}>Back</button>
-                                        <button type="submit" className={styles.editButtonSubmit}>Submit</button>
-                                    </div>
-                                </form>
-                            </div>
-                        ) : (
-                            employees.map((employee) => (
-                                <div className={styles.employeeCard} key={employee.username}>
-                                    <div className={styles.avatar}>
-                                        {employee.name.split(" ")[0].charAt(0)}
-                                        {employee.name.split(" ").slice(-1)[0].charAt(0)}
-                                    </div>
-                                    <h2>{employee.name}</h2>
-                                    <p><strong>Username:</strong> {employee.username}</p>
-                                    <p><strong>Age:</strong> {employee.age}</p>
-                                    <p><strong>Department:</strong> {departments.find(department => department.department_id === employee.department_id)?.department_name}</p>
-                                    <div className={styles.employeeButtons}>
-                                        <button className={styles.editButton} onClick={editEmployeeHandler}>
-                                            Edit
-                                        </button>
-                                        <button className={styles.deleteButton}>
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
-                        )} */}
                     </div>
                 </div>
             </>
