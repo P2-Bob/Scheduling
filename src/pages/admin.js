@@ -37,7 +37,7 @@ export async function getServerSideProps(ctx) {
     }
 }
 
-export default function Profile({ result }) {
+export default function Admin({ result }) {
 
     const { data: session } = useSession();
     let unAuthorized = true;

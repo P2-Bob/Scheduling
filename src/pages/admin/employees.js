@@ -1,12 +1,10 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '@/styles/Employees.module.css'
 import { executeQuery } from '../../../lib/db'
 import { getSession } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import Link from "next/link";
 import Navbar from '../components/navBar'
 
 export async function getServerSideProps(ctx) {
@@ -61,6 +59,7 @@ export default function Profile({ users, departments }) {
       
     const [employees, setEmployees] = useState(users);
     const [editingEmployee, setEditingEmployee] = useState(null);
+    const [deletingEmployee, setDeletingEmployee] = useState(null);
 
 
     const editingEmployeeHandler = (username) => {
@@ -83,12 +82,15 @@ export default function Profile({ users, departments }) {
     };
     
 
-    const deleteEmployeeHandler = async (username) => {
-        // delete the employee from the employee array
-
-        const updatedEmployees = employees.filter((user) => user.username !== username);
-        setEmployees(updatedEmployees);
+    const deletingEmployeeHandler = async (username) => {
+        setDeletingEmployee(username);
     };
+
+    const deleteEmployeeHandler = async (username) => {
+        // delete the employee from the employees array
+
+    }
+    
 
 
     const editEmployeeHandler = async (event) => {
@@ -274,6 +276,19 @@ export default function Profile({ users, departments }) {
                                             </form>
                                         </div>
 
+                                    ) : deletingEmployee === employee.username ? (
+                                            <>
+                                                <div className={styles.avatar}>
+                                                    {employee.name.split(" ")[0].charAt(0)}
+                                                    {employee.name.split(" ").slice(-1)[0].charAt(0)}
+                                                </div>
+                                                <h2>{employee.name}</h2>
+                                                <p>Are you sure you want to delete this employee?</p>
+                                                <div className={styles.employeeButtons}>
+                                                    <button type="button" className={styles.deleteButtonBack} onClick={deletingEmployeeHandler}>No</button>
+                                                    <button type="button" className={styles.deleteButtonSubmit} onClick={() => deleteEmployeeHandler(employee.username)}>Yes</button>
+                                                </div>
+                                            </>
                                     ) : (
                                         <>
                                         <div className={styles.avatar}>
@@ -288,7 +303,7 @@ export default function Profile({ users, departments }) {
                                             <button className={styles.editButton} onClick={() => editingEmployeeHandler(employee.username)}>
                                                 Edit
                                             </button>
-                                            <button className={styles.deleteButton} onClick={() => deleteEmployeeHandler(employee.username)}>
+                                            <button className={styles.deleteButton} onClick={() => deletingEmployeeHandler(employee.username)}>
                                                 Delete
                                             </button>
                                         </div>
