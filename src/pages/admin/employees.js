@@ -87,7 +87,18 @@ export default function Profile({ users, departments }) {
     };
 
     const deleteEmployeeHandler = async (username) => {
+        
+        
+        
         // delete the employee from the employees array
+        const updatedEmployees = employees.filter(
+            (employee) => employee.username !== username
+        );
+        // update the employees array
+        setEmployees(updatedEmployees);
+
+        // reset the deletingEmployee state
+        setDeletingEmployee(null);
 
     }
     
