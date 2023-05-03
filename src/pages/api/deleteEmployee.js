@@ -18,14 +18,14 @@ export default async function handler(req, res) {
             return;
         }
 
-        const { username, password, name, initials, role, age, department } = req.body;
+        const { username } = req.body;
 
         try {
-            const result = await executeQuery({
-                query: 'INSERT INTO users (username, password, name, initials, role, age, department) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                value: [username, password, name, initials, role, age, department]
+            await executeQuery({
+                query: 'DELETE FROM users WHERE username = ?',
+                value: [username]
             });
-            res.status(200).json({ result: "User created" });
+            res.status(200).json({ result: "User Succesfully Deleted" });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

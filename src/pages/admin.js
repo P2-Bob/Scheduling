@@ -87,11 +87,11 @@ export default function Admin({ result }) {
                     <div className={styles.container}>
                         <div className={styles.buttonContainer}>
                             <Link href="/admin/employees" className={styles.button}>Manage Employees</Link>
-                            <p>Manage employees, add new employees, remove employees, edit employees, etc.</p>
+                            <p>Manage employees, add new employees, remove employees and edit employees.</p>
                         </div>
                         <div className={styles.buttonContainer}>
                             <Link href="/admin/schedule" className={styles.button}>Manage Work Schedule</Link>
-                            <p>Manage work schedule, add new work schedule, remove work schedule, edit work schedule, etc.</p>
+                            <p>Manage work schedule, add new work schedule, remove work schedule and edit work schedule.</p>
                         </div>
                     </div>
                 </div>

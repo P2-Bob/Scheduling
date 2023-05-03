@@ -134,6 +134,38 @@
     width: 100%;
 }
 
+.backButton {
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    background-color: #37b0f7;
+}
+
+.backButton:hover {
+    background-color: #2b8ac0;
+}
+
+.submitButton {
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    background-color: #4caf50;
+    margin-left: 0.5rem;
+}
+
+
+.submitButton:hover {
+    background-color: #388e3c;
+}
+
 .editEmployee form button {
     color: #fff;
     border: none;
@@ -150,39 +182,6 @@
     width: 80%;
 }
 
-.editButtonSubmit {
-    background-color: #4caf50;
-    margin-left: 0.5rem;
-}
-
-
-.editButtonSubmit:hover {
-    background-color: #388e3c;
-}
-
-.editButtonBack {
-    background-color: #37b0f7;
-}
-
-.editButtonBack:hover {
-    background-color: #2b8ac0;
-}
-
-.deleteButtonBack {
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-top: 0.5rem;
-    background-color: #37b0f7;
-}
-
-.deleteButtonBack:hover {
-    background-color: #2b8ac0;
-}
-
 .deleteButtonSubmit {
     color: #fff;
     border: none;
@@ -196,4 +195,90 @@
 
 .deleteButtonSubmit:hover {
     background-color: #c02b2b;
+}
+
+.createUser {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    align-items: center;
+}
+
+.createUser h2 {
+    margin-bottom: 1rem;
+}
+
+.createUser form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.createUserForm {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.createUserInputWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0 1rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.createUserInputWrapper label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+.createUserInputWrapper input,
+.createUserInputWrapper select {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+
+
+.createUserButtons {
+    display: flex;
+    justify-content: space-around;
+    width: 50%;
+}
+
+.createUserButtons button {
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.createUserButtonContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+    width:90%;
+    padding: 1rem;
+}
+
+.createUserButtonContainer button {
+    font-size: 1.5rem;
 }

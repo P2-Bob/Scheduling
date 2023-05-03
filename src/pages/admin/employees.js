@@ -60,11 +60,20 @@ export default function Profile({ users, departments }) {
     const [employees, setEmployees] = useState(users);
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [deletingEmployee, setDeletingEmployee] = useState(null);
+    const [creatingEmployee, setCreatingEmployee] = useState(false);
 
 
     const editingEmployeeHandler = (username) => {
         setEditingEmployee(username);
     }
+    
+    const deletingEmployeeHandler = (username) => {
+        setDeletingEmployee(username);
+    };
+
+    const creatingEmployeeHandler = () => {
+        setCreatingEmployee(!creatingEmployee);
+    };
 
     const roleChangeHandler = (event, username) => {
         setSelectedRole({
@@ -82,13 +91,22 @@ export default function Profile({ users, departments }) {
     };
     
 
-    const deletingEmployeeHandler = async (username) => {
-        setDeletingEmployee(username);
-    };
 
     const deleteEmployeeHandler = async (username) => {
         
-        
+        // delete the employee from the database
+        const result = await fetch('/api/deleteEmployee', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: username,
+            })
+        });
+
+        if (!result.ok) {
+            alert('Something went wrong!');
+            return;
+        }
         
         // delete the employee from the employees array
         const updatedEmployees = employees.filter(
@@ -99,6 +117,8 @@ export default function Profile({ users, departments }) {
 
         // reset the deletingEmployee state
         setDeletingEmployee(null);
+
+        alert('Employee updated successfully!');
 
     }
     
@@ -181,6 +201,71 @@ export default function Profile({ users, departments }) {
 
     }
 
+    const createEmployeeHandler = async (event) => {
+        event.preventDefault();
+
+        const username = event.target.username.value;
+        const password = event.target.password.value;
+        const name = event.target.name.value;
+        const role = event.target.role.value;
+        const age = event.target.age.value;
+        const departmentName = event.target.department.value;
+
+        // check if the username already exists
+        const usernameExists = employees.some(
+            (employee) => employee.username === username
+        );
+
+        if (usernameExists) {
+            alert('Username already taken!');
+            return;
+        }
+
+        // get id of the department from the departments array
+        const department_id = departments.find(
+            (department) => department.department_name === departmentName
+        ).department_id;
+        
+        const result = await fetch('/api/createEmployee', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                name: name,
+                role: role,
+                age: age,
+                department_id: department_id
+            })
+        });
+
+        if (!result.ok) {
+            alert('Something went wrong!');
+            return;
+        }
+
+        // update the employees array
+        setEmployees([
+            {
+                username,
+                password,
+                name,
+                role,
+                age,
+                department_id,
+            },
+            ...employees,
+        ]);
+
+        // reset the creatingEmployee state
+        setCreatingEmployee(false);
+
+        alert('Employee created successfully!');
+
+    }
+
+
+
     const { data: session } = useSession();
     let unAuthorized = true;
     let foundUser = null;
@@ -232,7 +317,58 @@ export default function Profile({ users, departments }) {
                         <h1>Employee Section</h1>
                         <p>Welcome to the employee section, what do you wanna do?</p>
                     </div>
-                    
+                    {creatingEmployee ? (
+                        <>
+                            <div className={styles.createUser}>
+                                <h2>Create Employee</h2>
+                                <form onSubmit={createEmployeeHandler}>
+                                    <div className={styles.createUserForm}>
+                                        <div className={styles.createUserInputWrapper}>
+                                            <label htmlFor="username">Username</label>
+                                            <input type="text" id="username" name="username" placeholder="Username" />
+                                        </div>
+                                        <div className={styles.createUserInputWrapper}>
+                                            <label htmlFor="Password">Password</label>
+                                            <input type="password" id="password" name="password" placeholder="Password" />
+                                        </div>
+                                        <div className={styles.createUserInputWrapper}>
+                                            <label htmlFor="name">Full Name</label>
+                                            <input type="text" id="name" name="name" placeholder="Name" />
+                                        </div>
+                                        <div className={styles.createUserInputWrapper}>
+                                            <label htmlFor="role">Role</label>
+                                            <select id="role" name="role">
+                                                <option value="employee">Employee</option>
+                                                <option value="admin">Admin</option>
+                                            </select>
+                                        </div>
+                                        <div className={styles.createUserInputWrapper}>
+                                            <label htmlFor="age">Age</label>
+                                            <input type="number" id="age" name="age" placeholder="Age" />
+                                        </div>
+                                        <div className={styles.createUserInputWrapper}>
+                                            <label htmlFor="department">Department</label>
+                                            <select id="department" name="department">
+                                                {
+                                                    departments.map((department) => (
+                                                        <option key={department.department_id} value={department.department_name}>{department.department_name}</option>
+                                                        ))
+                                                    }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className={styles.createUserButtons}>
+                                        <button type="button" className={styles.backButton} onClick={creatingEmployeeHandler}>Back</button>
+                                        <button type="submit" className={styles.submitButton}>Create</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </>
+                    ) : (
+                        <div className={styles.createUserButtonContainer}>
+                            <button type="button" className={styles.submitButton} onClick={creatingEmployeeHandler}>+</button>
+                        </div>
+                    )}
                     <div className={styles.employeeList}>
                         {
                             employees.map((employee) => (
@@ -281,8 +417,8 @@ export default function Profile({ users, departments }) {
                                                     </select>
                                                 </div>
                                                 <div className={styles.editEmployeeButtons}>
-                                                    <button type="button" className={styles.editButtonBack} onClick={editingEmployeeHandler}>Back</button>
-                                                    <button type="submit" className={styles.editButtonSubmit}>Submit</button>
+                                                    <button type="button" className={styles.backButton} onClick={editingEmployeeHandler}>Back</button>
+                                                    <button type="submit" className={styles.submitButton}>Submit</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -296,7 +432,7 @@ export default function Profile({ users, departments }) {
                                                 <h2>{employee.name}</h2>
                                                 <p>Are you sure you want to delete this employee?</p>
                                                 <div className={styles.employeeButtons}>
-                                                    <button type="button" className={styles.deleteButtonBack} onClick={deletingEmployeeHandler}>No</button>
+                                                    <button type="button" className={styles.backButton} onClick={deletingEmployeeHandler}>No</button>
                                                     <button type="button" className={styles.deleteButtonSubmit} onClick={() => deleteEmployeeHandler(employee.username)}>Yes</button>
                                                 </div>
                                             </>
