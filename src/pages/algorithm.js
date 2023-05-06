@@ -47,8 +47,8 @@ const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, 
 
 
 
-    validCount = 0
-    validEmployee = false;
+    let validCount = 0;
+    let validEmployee = false;
     while (!validEmployee || validCount != 0) {
       validCount = 0
       validEmployee = false;
@@ -67,7 +67,7 @@ const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, 
       }
 
       if (day === 'Saturday' || day === 'Sunday') {
-        temprandom = Math.floor(Math.random() * 2);
+        let temprandom = Math.floor(Math.random() * 2);
 
         if (temprandom === 0) {
           pickEmployee[amountOfWorkersCounter] = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
@@ -100,7 +100,7 @@ const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, 
 
 
 const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) => {
-  localValidEmployee = false;
+  let localValidEmployee = false;
   while (!localValidEmployee) {
     let tempCheck = 0;
     for (let sameEmployeeCheckInterval = 1; sameEmployeeCheckInterval < amountOfWorkers; sameEmployeeCheckInterval++) {
@@ -201,23 +201,20 @@ const randomSchedule = (employees, youthEmployees, preference) => {
 
   for (let daysLength = 0; daysLength < days.length; daysLength++) {
     const day = days[daysLength];
-    schedule[day] = [];
+    schedule[day] = {};
 
     for (let shiftsLength = 0; shiftsLength < shifts.length; shiftsLength++) {
       const shift = shifts[shiftsLength];
+      schedule[day][shift] = [];
 
       const pickedEmployee = randomEmployee(amountOfWorkers, employees, youthEmployees, schedule, day, shift);
-
       schedule[day][shift] = pickedEmployee;
-
     }
   }
 
-
-  //console.log("Kig her: ", unavailableEmployees);
   fitnessValue = fitness(schedule, employees, youthEmployees, preference);
 
-    unavailableEmployees = {
+  unavailableEmployees = {
     "Monday": [],
     "Tuesday": [],
     "Wednesday": [],
@@ -225,13 +222,14 @@ const randomSchedule = (employees, youthEmployees, preference) => {
     "Friday": [],
     "Saturday": [],
     "Sunday": [],
-    }
+  }
     
   return schedule;
 }
 
 
-(async () => {
+
+/* (async () => {
     const employees = await employess('SELECT username FROM users WHERE age >= 18');
     const youthEmployees = await employess('SELECT username FROM users WHERE age < 18');
     const preference = await employess('SELECT * FROM preference');
@@ -254,8 +252,36 @@ const randomSchedule = (employees, youthEmployees, preference) => {
     console.log("This is the fittest schedule:", schedule);
     console.log("Total value:", fitnessValue);
     console.log("Population:", count);
-})();
+})(); */
 
 
+const generateSchedule = async (employees, youthEmployees, preference) => {
+  try {
+
+    let count = 0;
+    let schedule = {};
+    console.log("Searching for fittest schedule...");
+    let highScore = 0;
+    while (fitnessValue <= 7699) {
+      schedule = randomSchedule(employees, youthEmployees, preference);
+      //console.log("Total value:", fitnessValue);
+      if (fitnessValue > highScore) {
+        highScore = fitnessValue;
+        console.log("This is the current fittest schedule:", schedule);
+        console.log("New high score:", highScore);
+        console.log("Population:", count);
+      }
+      count++;
+    }
+    console.log("This is the fittest schedule:", schedule);
+    console.log("Total value:", fitnessValue);
+    console.log("Population:", count);
+
+    return Promise.resolve({ schedule, fitnessValue, count });
+  } catch (error) {
+    throw error;
+  }
+};
 
 
+export default generateSchedule;

@@ -1,8 +1,7 @@
 import Head from 'next/head'
 import styles from '@/styles/Employees.module.css'
 import { executeQuery } from '../../../lib/db'
-import { getSession } from 'next-auth/react'
-import { useSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Navbar from '../components/navBar'
@@ -39,7 +38,7 @@ export async function getServerSideProps(ctx) {
     }
 }
 
-export default function Profile({ users, departments }) {
+export default function employees({ users, departments }) {
 
     const [selectedRole, setSelectedRole] = useState(
         users.reduce((acc, user) => {
