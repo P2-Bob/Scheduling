@@ -1,4 +1,6 @@
 const mysql = require('mysql2');
+const _ = require('lodash');
+
 
 const employees1 = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Fred', 'Grace', 'Helen', 'Irene', 'Jack', 'Kelly', 'Larry', 'Mallory', 'Nora', 'Oscar', 'Peggy', 'Quinn', 'Robert'];
 const youthemployees = ['Mia', 'Nia', 'Oia', 'Pia', 'Qia', 'Ria', 'Sia', 'Tia', 'Uia', 'Via', 'Wia', 'Xia', 'Yia', 'Zia', 'Aia', 'Bia', 'Cia', 'Dia', 'Eia', 'Fia', 'Gia', 'Hia', 'Iia', 'Jia', 'Kia'];
@@ -201,7 +203,7 @@ const randomSchedule = (employees, youthEmployees, preference) => {
 
   for (let daysLength = 0; daysLength < days.length; daysLength++) {
     const day = days[daysLength];
-    schedule[day] = [];
+    schedule[day] = {};
 
     for (let shiftsLength = 0; shiftsLength < shifts.length; shiftsLength++) {
       const shift = shifts[shiftsLength];
@@ -230,7 +232,9 @@ const randomSchedule = (employees, youthEmployees, preference) => {
   return schedule;
 }
 
-const randomEmployeeSwap = (amountOfWorkers, worker, employees, youthEmployees, preference, bestSchedule, swappedSchedule) => {
+
+
+const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preference, bestSchedule, swappedSchedule) => {
 
   for (let daysLength = 0; daysLength < days.length; daysLength++) {
     const day = days[daysLength];
@@ -240,12 +244,37 @@ const randomEmployeeSwap = (amountOfWorkers, worker, employees, youthEmployees, 
       const shift = shifts[shiftsLength];
       let tempSwap = [];
       let randomSwap = Math.floor(Math.random() * 2);
+      let pickEmployee = [];
+
       if (randomSwap === 0) {
+
         tempSwap = swappedSchedule[day][shift];
         let randomEmployeePicker = Math.floor(Math.random() * amountOfWorkers);
-        pickEmployee = worker[Math.floor(Math.random() * worker.length)].username;
-        tempSwap[randomEmployeePicker] = pickEmployee;
 
+
+        if (shift === '17-22') {
+
+          let temprandom = Math.floor(Math.random() * 2);
+  
+          if (temprandom === 0) {
+            pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+          } else {
+            pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+          }
+        }
+  
+        if (day === 'Saturday' || day === 'Sunday') {
+          temprandom = Math.floor(Math.random() * 2);
+  
+          if (temprandom === 0) {
+            pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+          } else {
+            pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+          }
+        }
+  
+
+        tempSwap[randomEmployeePicker] = pickEmployee;
 
         swappedSchedule[day][shift] = tempSwap;
       }
@@ -267,7 +296,7 @@ const randomEmployeeSwap = (amountOfWorkers, worker, employees, youthEmployees, 
   let bestSchedule = {};
   console.log("Searching for fittest schedule...");
   let highScore = 0;
-  while (fitnessValue <= 7300) {
+  while (fitnessValue <= 7000) {
     schedule = randomSchedule(employees, youthEmployees, preference);
     //console.log("Total value:", fitnessValue);
     if (fitnessValue > highScore) {
@@ -283,23 +312,27 @@ const randomEmployeeSwap = (amountOfWorkers, worker, employees, youthEmployees, 
   console.log("This is the fittest schedule:", schedule);
   console.log("Total value:", fitnessValue);
   console.log("Population:", count);
-  console.log("Best schedule:", bestSchedule);
 
 
-  let swappedSchedule = bestSchedule;
+
+  let swappedSchedule = _.cloneDeep(bestSchedule);
   let swappedFitnessValue = 0;
-
-
-  swappedSchedule = bestSchedule
-  randomEmployeeSwap(amountOfWorkers, employees, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
-
-  console.log(swappedSchedule);
+ 
+  let swapTries = 0;
+while(swappedFitnessValue < fitnessValue + 1) {
+  swappedSchedule = _.cloneDeep(bestSchedule);
+  
+  swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
   swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
   console.log("Swapped Fitness", swappedFitnessValue);
 
+  swapTries++;
   
-
-
+}
+console.log("Tries:", swapTries);
+console.log("Total value:", fitnessValue);
+console.log("Swapped Fitness", swappedFitnessValue);
+console.log("Swapped Schedule", swappedSchedule);
 })();
 
 
