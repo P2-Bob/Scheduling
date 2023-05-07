@@ -232,7 +232,9 @@ const randomSchedule = (employees, youthEmployees, preference) => {
   return schedule;
 }
 
-const randomEmployeeSwap = (amountOfWorkers, worker, employees, youthEmployees, preference, bestSchedule, swappedSchedule) => {
+
+
+const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preference, bestSchedule, swappedSchedule) => {
 
   for (let daysLength = 0; daysLength < days.length; daysLength++) {
     const day = days[daysLength];
@@ -242,12 +244,37 @@ const randomEmployeeSwap = (amountOfWorkers, worker, employees, youthEmployees, 
       const shift = shifts[shiftsLength];
       let tempSwap = [];
       let randomSwap = Math.floor(Math.random() * 2);
+      let pickEmployee = [];
+
       if (randomSwap === 0) {
+
         tempSwap = swappedSchedule[day][shift];
         let randomEmployeePicker = Math.floor(Math.random() * amountOfWorkers);
-        pickEmployee = worker[Math.floor(Math.random() * worker.length)].username;
-        tempSwap[randomEmployeePicker] = pickEmployee;
 
+
+        if (shift === '17-22') {
+
+          let temprandom = Math.floor(Math.random() * 2);
+  
+          if (temprandom === 0) {
+            pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+          } else {
+            pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+          }
+        }
+  
+        if (day === 'Saturday' || day === 'Sunday') {
+          temprandom = Math.floor(Math.random() * 2);
+  
+          if (temprandom === 0) {
+            pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+          } else {
+            pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+          }
+        }
+  
+
+        tempSwap[randomEmployeePicker] = pickEmployee;
 
         swappedSchedule[day][shift] = tempSwap;
       }
@@ -292,10 +319,10 @@ const randomEmployeeSwap = (amountOfWorkers, worker, employees, youthEmployees, 
   let swappedFitnessValue = 0;
  
   let swapTries = 0;
-while(swappedFitnessValue < fitnessValue ) {
+while(swappedFitnessValue < fitnessValue + 1) {
   swappedSchedule = _.cloneDeep(bestSchedule);
-  worker = employees
-  swappedSchedule = randomEmployeeSwap(amountOfWorkers, worker, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
+  
+  swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
   swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
   console.log("Swapped Fitness", swappedFitnessValue);
 
