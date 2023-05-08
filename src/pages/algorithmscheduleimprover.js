@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
 const _ = require('lodash');
+//const { em } = require('@fullcalendar/core/internal-common');
 // const { co } = require('@fullcalendar/core/internal-common');
 
 
@@ -144,6 +145,28 @@ const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) =>
 	return true;
 }
 
+const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
+	const tempSchedule = schedule;
+  
+	for (const day in tempSchedule) {
+		for (const shift in tempSchedule[day]) {
+			for (const employeeObj of employees) {
+				const employeeName = employeeObj.username;
+				if (tempSchedule[day][shift].includes(employeeName)) {
+					console.log(employeeName);
+					console.log(tempSchedule[day][shift]);
+					const lastshift = shift.split('-')[1];
+					const lastShiftDay = day;
+					const lastWorked = { day: lastShiftDay, shift: lastshift, employee: employeeName};
+					console.log(lastWorked);
+					console.log(tempSchedule[day][shift].includes(employeeName));
+				}
+			}
+		}
+	}
+}
+
+
 
 // const sameEmployeeCheckDay = (schedule, day, pickEmployee, amountOfWorkersCounter, shift, worker) => {
 
@@ -182,7 +205,7 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 				const hasYouthEmployee = youthEmployees.some((e) => e.username === employee);
 				if (hasEmployee) {
 					value += 100;
-
+					
 					const employeePreference = preference.find((p) => p.username === employee);
 
 					if (employeePreference) {
@@ -390,7 +413,8 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 	console.log("This is the fittest schedule:", schedule);
 	console.log("Total value:", fitnessValue);
 	console.log("Population:", count);
-
+	console.log("Lille check", getOverworkedEmployeeCheck(schedule, employees, youthEmployees));
+	
 
 
 	let swappedSchedule = _.cloneDeep(bestSchedule);
@@ -403,6 +427,8 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 		swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
 		swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
 		console.log("Swapped Fitness", swappedFitnessValue);
+		
+		//const overworkedEmployeeCheck = OverworkedEmployeeCheck(swappedSchedule, day, pickEmployee, amountOfWorkersCounter, shift, employees);
 
 		swapTries++;
 
