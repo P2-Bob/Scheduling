@@ -147,7 +147,7 @@ const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) =>
 
 const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 	const tempSchedule = schedule;
-  
+	const lastWorkedObj = [];
 	for (const day in tempSchedule) {
 		for (const shift in tempSchedule[day]) {
 			for (const employeeObj of employees) {
@@ -158,12 +158,25 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 					const lastshift = shift.split('-')[1];
 					const lastShiftDay = day;
 					const lastWorked = { day: lastShiftDay, shift: lastshift, employee: employeeName};
+					lastWorkedObj.push(lastWorked);
+					shiftsWorked = lastWorkedObj.filter((obj) => obj.employee === employeeName);
+					console.log(shiftsWorked);
+					for (const shift in shiftsWorked) {
+						console.log(shift);
+						console.log(shiftsWorked[shift].shift);
+						const firstShift = shiftsWorked[shift].shift
+						const nowShift = shiftsWorked[shift].shift
+						//Check what time the shift was worked
+						//if they had a shift that ended at 22 then the cant work at the day after at 6
+						
+					}
 					console.log(lastWorked);
 					console.log(tempSchedule[day][shift].includes(employeeName));
 				}
 			}
 		}
 	}
+	console.log(lastWorkedObj);
 }
 
 
