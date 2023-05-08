@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
 const _ = require('lodash');
+// const { co } = require('@fullcalendar/core/internal-common');
 
 
 const employees1 = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Fred', 'Grace', 'Helen', 'Irene', 'Jack', 'Kelly', 'Larry', 'Mallory', 'Nora', 'Oscar', 'Peggy', 'Quinn', 'Robert'];
@@ -18,6 +19,18 @@ let unavailableEmployees = {
 	"Saturday": [],
 	"Sunday": [],
 }
+
+let bestUnavailableEmployees = {
+	"Monday": [],
+	"Tuesday": [],
+	"Wednesday": [],
+	"Thursday": [],
+	"Friday": [],
+	"Saturday": [],
+	"Sunday": [],
+}
+
+
 
 const employess = async (query) => {
 	const value = [];
@@ -104,10 +117,12 @@ const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, 
 const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) => {
 	if (amountOfWorkersCounter === 0) {
 		return true;
-	  }
+	}
+	let recursionCount = 0;
 
 	localValidEmployee = false;
-	while (!localValidEmployee) {
+	while (!localValidEmployee || recursionCount < 20) {
+		localValidEmployee = false;
 		let tempCheck = 0;
 		for (let sameEmployeeCheckInterval = 1; sameEmployeeCheckInterval < amountOfWorkers; sameEmployeeCheckInterval++) {
 			if (pickEmployee[amountOfWorkersCounter] === pickEmployee[amountOfWorkersCounter - sameEmployeeCheckInterval]) {
@@ -115,10 +130,16 @@ const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) =>
 				pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
 				sameEmployeeCheckInterval++;
 			}
+			if (recursionCount > 20) {
+				console.log("oopsies");
+			}
+
 		}
+
+
 		if (tempCheck === 0) {
 			localValidEmployee = true;
-		} else sameEmployeeCheckShift(pickEmployee, amountOfWorkersCounter, worker);
+		} recursionCount++;;
 	}
 	return true;
 }
@@ -194,6 +215,12 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 							value += 25;
 						}
 					}
+
+
+				}
+				if (unavailableEmployees[day].includes(schedule[day])) {
+					value -= 1000;
+					console.log("hej");
 				}
 			}
 		}
@@ -222,6 +249,7 @@ const randomSchedule = (employees, youthEmployees, preference) => {
 
 	//console.log("Kig her: ", unavailableEmployees);
 	fitnessValue = fitness(schedule, employees, youthEmployees, preference);
+	bestUnavailableEmployees = _.cloneDeep(unavailableEmployees)
 
 	unavailableEmployees = {
 		"Monday": [],
@@ -232,6 +260,7 @@ const randomSchedule = (employees, youthEmployees, preference) => {
 		"Saturday": [],
 		"Sunday": [],
 	}
+
 
 	return schedule;
 }
@@ -289,83 +318,100 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 						worker = youthEmployees;
 					} else { worker = employees; }
 
-					console.log(pickEmployee);
+					//console.log(pickEmployee);
 					validEmployee = sameEmployeeCheckShift(pickEmployee, 1, worker);
-					console.log(pickEmployee);
+					//console.log(pickEmployee);
 
-					if (unavailableEmployees[day].includes(pickEmployee)) {
+					//console.log(unavailableEmployees);
+					if (bestUnavailableEmployees[day].includes(pickEmployee)) {
 						validCount++;
+						console.log("hejjjjj");
 					}
 
 
 
 					if (!validEmployee || validCount != 0) {
-						pickEmployee[1] = worker[Math.floor(Math.random() * worker.length)].username;
+						pickEmployee = worker[Math.floor(Math.random() * worker.length)].username;
 					}
 
-					tempSwap[randomEmployeePicker] = pickEmployee;
 
-
-
-					swappedSchedule[day][shift] = tempSwap;
 				}
+
+				
+				let beforeSwapEmployee = tempSwap[randomEmployeePicker];
+				console.log("before:", beforeSwapEmployee);
+				console.log("after:", pickEmployee);
+
+
+				var index = bestUnavailableEmployees[day].indexOf(beforeSwapEmployee);
+				if (index !== -1) {
+					bestUnavailableEmployees[day].splice(index, 1);
+				}
+
+				tempSwap[randomEmployeePicker] = pickEmployee;
+				swappedSchedule[day][shift] = tempSwap;
+
+
+				bestUnavailableEmployees[day] = bestUnavailableEmployees[day].concat(pickEmployee);
+
 			}
 		}
 
-		return swappedSchedule;
 	}
+	console.log(bestUnavailableEmployees);
+	return swappedSchedule;
 }
 
 
 
-	(async () => {
-		const employees = await employess('SELECT username FROM users WHERE age >= 18');
-		const youthEmployees = await employess('SELECT username FROM users WHERE age < 18');
-		const preference = await employess('SELECT * FROM preference');
+(async () => {
+	const employees = await employess('SELECT username FROM users WHERE age >= 18');
+	const youthEmployees = await employess('SELECT username FROM users WHERE age < 18');
+	const preference = await employess('SELECT * FROM preference');
 
-		let count = 0;
-		let schedule = {};
-		let bestSchedule = {};
-		console.log("Searching for fittest schedule...");
-		let highScore = 0;
-		while (fitnessValue <= 7500) {
-			schedule = randomSchedule(employees, youthEmployees, preference);
-			//console.log("Total value:", fitnessValue);
-			if (fitnessValue > highScore) {
-				highScore = fitnessValue;
-				bestSchedule = schedule;
-				console.log("This is the current fittest schedule:", schedule);
-				console.log("New high score:", highScore);
-				console.log("Population:", count);
-
-			}
-			count++;
-		}
-		console.log("This is the fittest schedule:", schedule);
-		console.log("Total value:", fitnessValue);
-		console.log("Population:", count);
-		console.log("hej");
-
-
-		let swappedSchedule = _.cloneDeep(bestSchedule);
-		let swappedFitnessValue = 0;
-
-		let swapTries = 0;
-		while (swappedFitnessValue < fitnessValue + 1) {
-			swappedSchedule = _.cloneDeep(bestSchedule);
-
-			swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
-			swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
-			console.log("Swapped Fitness", swappedFitnessValue);
-
-			swapTries++;
+	let count = 0;
+	let schedule = {};
+	let bestSchedule = {};
+	console.log("Searching for fittest schedule...");
+	let highScore = 0;
+	while (fitnessValue <= 7500) {
+		schedule = randomSchedule(employees, youthEmployees, preference);
+		//console.log("Total value:", fitnessValue);
+		if (fitnessValue > highScore) {
+			highScore = fitnessValue;
+			bestSchedule = schedule;
+			console.log("This is the current fittest schedule:", schedule);
+			console.log("New high score:", highScore);
+			console.log("Population:", count);
 
 		}
-		console.log("Tries:", swapTries);
-		console.log("Total value:", fitnessValue);
+		count++;
+	}
+	console.log("This is the fittest schedule:", schedule);
+	console.log("Total value:", fitnessValue);
+	console.log("Population:", count);
+
+
+
+	let swappedSchedule = _.cloneDeep(bestSchedule);
+	let swappedFitnessValue = 0;
+
+	let swapTries = 0;
+	while (swappedFitnessValue < fitnessValue + 1) {
+		swappedSchedule = _.cloneDeep(bestSchedule);
+
+		swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
+		swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
 		console.log("Swapped Fitness", swappedFitnessValue);
-		console.log("Swapped Schedule", swappedSchedule);
-	})();
+
+		swapTries++;
+
+	}
+	console.log("Tries:", swapTries);
+	console.log("Total value:", fitnessValue);
+	console.log("Swapped Fitness", swappedFitnessValue);
+	console.log("Swapped Schedule", swappedSchedule);
+})();
 
 
 
