@@ -54,7 +54,7 @@ const employess = async (query) => {
 }
 
 const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, shift) => {
-	let pickEmployee = []
+	let pickEmployee = [];
 
 	for (let amountOfWorkersCounter = 0; amountOfWorkersCounter < amountOfWorkers; amountOfWorkersCounter++) {
 
@@ -63,8 +63,8 @@ const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, 
 
 
 
-		validCount = 0
-		validEmployee = false;
+		let validCount = 0;
+		let validEmployee = false;
 		while (!validEmployee || validCount != 0) {
 			validCount = 0
 			validEmployee = false;
@@ -83,7 +83,7 @@ const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, 
 			}
 
 			if (day === 'Saturday' || day === 'Sunday') {
-				temprandom = Math.floor(Math.random() * 2);
+				let temprandom = Math.floor(Math.random() * 2);
 
 				if (temprandom === 0) {
 					pickEmployee[amountOfWorkersCounter] = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
@@ -121,7 +121,7 @@ const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) =>
 	}
 	let recursionCount = 0;
 
-	localValidEmployee = false;
+	let localValidEmployee = false;
 	while (!localValidEmployee || recursionCount < 20) {
 		localValidEmployee = false;
 		let tempCheck = 0;
@@ -159,7 +159,7 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 					const lastShiftDay = day;
 					const lastWorked = { day: lastShiftDay, shift: lastshift, employee: employeeName};
 					lastWorkedObj.push(lastWorked);
-					shiftsWorked = lastWorkedObj.filter((obj) => obj.employee === employeeName);
+					let shiftsWorked = lastWorkedObj.filter((obj) => obj.employee === employeeName);
 					console.log(shiftsWorked);
 					for (const shift in shiftsWorked) {
 						console.log(shift);
@@ -313,18 +313,20 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 			const shift = shifts[shiftsLength];
 			let tempSwap = [];
 			let randomSwap = Math.floor(Math.random() * 2);
-			let pickEmployee = [];
+			let pickEmployee;
 
 			if (randomSwap === 0) {
 
 				tempSwap = swappedSchedule[day][shift];
+
+
 				let randomEmployeePicker = Math.floor(Math.random() * amountOfWorkers);
 				pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+				console.log("pickEmployee: ", pickEmployee);
 
-
-
-				validCount = 0
-				validEmployee = false;
+				let worker = null;
+				let validCount = 0;
+				let validEmployee = false;
 				while (!validEmployee || validCount != 0) {
 					validCount = 0
 					validEmployee = false;
@@ -341,7 +343,7 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 					}
 
 					if (day === 'Saturday' || day === 'Sunday') {
-						temprandom = Math.floor(Math.random() * 2);
+						let temprandom = Math.floor(Math.random() * 2);
 
 						if (temprandom === 0) {
 							pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
@@ -400,7 +402,7 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 
 
 
-(async () => {
+/* (async () => {
 	const employees = await employess('SELECT username FROM users WHERE age >= 18');
 	const youthEmployees = await employess('SELECT username FROM users WHERE age < 18');
 	const preference = await employess('SELECT * FROM preference');
@@ -450,8 +452,61 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 	console.log("Total value:", fitnessValue);
 	console.log("Swapped Fitness", swappedFitnessValue);
 	console.log("Swapped Schedule", swappedSchedule);
-})();
+})(); */
 
 
+const generateSchedule = async (employees, youthEmployees, preference) => {
 
+	let count = 0;
+	let schedule = {};
+	let bestSchedule = {};
+	fitnessValue = 0;
+	console.log("Searching for fittest schedule...");
+	let highScore = 0;
+	while (fitnessValue <= 7649) {
+		schedule = randomSchedule(employees, youthEmployees, preference);
+		//console.log("Total value:", fitnessValue);
+		if (fitnessValue > highScore) {
+			highScore = fitnessValue;
+			bestSchedule = schedule;
+			console.log("This is the current fittest schedule:", schedule);
+			console.log("New high score:", highScore);
+			console.log("Population:", count);
+
+		}
+		count++;
+	}
+	console.log("This is the fittest schedule:", schedule);
+	console.log("Total value:", fitnessValue);
+	console.log("Population:", count);
+	console.log("Lille check", getOverworkedEmployeeCheck(schedule, employees, youthEmployees));
+	
+
+
+	let swappedSchedule = bestSchedule;
+	let swappedFitnessValue = 0;
+
+	let swapTries = 0;
+	while (swappedFitnessValue < fitnessValue + 401) {
+		swappedSchedule =bestSchedule;
+
+		swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
+		swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
+		console.log("Swapped Fitness", swappedFitnessValue);
+		
+		//const overworkedEmployeeCheck = OverworkedEmployeeCheck(swappedSchedule, day, pickEmployee, amountOfWorkersCounter, shift, employees);
+
+		swapTries++;
+
+	}
+	console.log("Tries:", swapTries);
+	console.log("Total value:", fitnessValue);
+	console.log("Swapped Fitness", swappedFitnessValue);
+	console.log("Swapped Schedule", swappedSchedule);
+
+	return Promise.resolve({schedule: swappedSchedule, fitnessValue: swappedFitnessValue, count: swapTries})
+};
+
+
+export default generateSchedule;
 

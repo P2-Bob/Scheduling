@@ -105,10 +105,10 @@ const DayGridTable = () => {
       <div>
         {/* Month and year header */}
         <div className={styles.monthYearHeader}>
+            {monthYearString(displayedMonth, displayedYear)}
             <span className={styles.arrow} onClick={handlePrevMonthClick}>
             &larr;
             </span>
-            {monthYearString(displayedMonth, displayedYear)}
             <span className={styles.arrow} onClick={handleNextMonthClick}>
             &rarr;
             </span>

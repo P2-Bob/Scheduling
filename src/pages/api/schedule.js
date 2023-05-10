@@ -1,8 +1,9 @@
 import { executeQuery } from "../../../lib/db";
-import generateSchedule from "../algorithm";
+import generateSchedule from "../algorithmscheduleimprover";
 
 export default async (req, res) => {
     try {
+        res.setHeader('Cache-Control', 'no-store, max-age=0');
 
         const employees = await executeQuery({
             query: 'SELECT username FROM users WHERE age >= 18',
