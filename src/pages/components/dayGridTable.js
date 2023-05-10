@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from '@/styles/dayGridTable.module.css';
 
-const DayGridTable = () => {
+
+const DayGridTable = ({schedule}) => {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();

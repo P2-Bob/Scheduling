@@ -55,6 +55,7 @@ export async function getServerSideProps(ctx) {
 
 export default function Home({ result }) {
 
+	
   return (
     <>
       <Head>
@@ -67,7 +68,7 @@ export default function Home({ result }) {
       <div className={styles.main}>
         <h1>Your Upcoming Shifts</h1>
         <div className={styles.calendar}>
-          <DayGridTable />
+          <DayGridTable schedule={userSchedule} />
           <FullCalendar
             plugins={[dayGridPlugin]}
             initialView="dayGridMonth"
@@ -77,7 +78,7 @@ export default function Home({ result }) {
             dayHeaderFormat={{ weekday: 'long' }}
           />
         </div>
-      </div>
+      </div> 
     </>
   )
 }

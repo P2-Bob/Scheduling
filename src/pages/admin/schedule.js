@@ -29,6 +29,43 @@ export async function getServerSideProps(ctx) {
 }
 
 export default function Schedule({ users }) {
+
+    let schedule = [];
+	let userSchedule = [];
+    let weekNumber = 1;
+    //Database: username, shift_id: shift, work_day: day
+	const retriveSchedule = async () => {
+		const schedulefetch = await fetch('/api/schedule', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({weekNumber: weekNumber})
+		});
+
+		if (!schedulefetch.ok) {alert("Error fetching schedule data")};
+
+		schedule = await schedulefetch.json();
+		console.log(schedule.schedule);
+        Object.keys(schedule.schedule).forEach((day) => {
+            const dayShifts = schedule.schedule[day];
+            Object.keys(schedule.schedule[day]).forEach((shift) => {
+                const users = dayShifts[shift];
+                users.forEach((user) => {
+                    userSchedule.push({ username: user, work_day: day, shift_id: shift});
+                });
+            });
+        });
+        console.log(userSchedule);
+
+        const uploadSchedule = await fetch('/api/uploadSchedule', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ schedule: userSchedule})
+        });
+	};
+    
+	
+
+
     const { data: session } = useSession();
     let unAuthorized = true;
     let foundUser = null;
@@ -53,7 +90,7 @@ export default function Schedule({ users }) {
             </Head>
             <Navbar name={foundUser.name} />
             <h1>Schedule</h1>
-            <button onClick={() => console.log(users)}>Click me</button>
+            <button onClick={retriveSchedule}>Click me</button>
         </>
     )
 }

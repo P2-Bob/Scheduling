@@ -39,6 +39,34 @@ export async function getServerSideProps(ctx) {
 
 export default function Admin({ result }) {
 
+    let schedule = [];
+	let userSchedule = [];
+
+	const retriveSchedule = async () => {
+		const schedulefetch = await fetch('/api/schedule', {
+			method: 'GET',
+			headers: {'Content-Type': 'application/json'}
+		});
+
+		if (!schedulefetch.ok) {alert("Error fetching schedule data")};
+
+		schedule = await schedulefetch.json();
+		console.log(schedule.schedule);
+
+		for (const day in schedule.schedule){
+			console.log(day)
+			for (const shift in schedule.schedule[day]){
+				for (const employeeName in schedule.schedule[day][shift]) {
+					if (schedule.schedule[day][shift][employeeName] == result[0].username){
+						userSchedule.push({ day: day, shift: shift });
+					}
+				}
+			}
+		}
+		console.log(userSchedule); 
+	};
+	
+
     const { data: session } = useSession();
     let unAuthorized = true;
     if (session) {
