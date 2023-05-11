@@ -29,7 +29,6 @@ export default async (req, res) => {
                 untilNextMonday = 7;
             }
             d.setDate(d.getDate() + untilNextMonday);
-            console.log(d.toISOString().substring(0,10));
             return d;
         };
         let date = null;
@@ -55,7 +54,6 @@ export default async (req, res) => {
                 });
             });
         });
-        console.log(userSchedule);
         userSchedule.forEach(async (user) => {
             await executeQuery({
                 query: 'INSERT INTO schedule (username, shift_id, work_day, date) VALUES (?, ?, ?, ?)',

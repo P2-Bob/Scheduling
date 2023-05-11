@@ -13,11 +13,11 @@ export default async function handler(req, res) {
   } else {
     console.log(session)
 
-    const result = await executeQuery({
-      query: 'SELECT * FROM users',
+    await executeQuery({
+      query: 'TRUNCATE TABLE schedule',
       value: []
     });
-    console.log(result[4])
-    res.status(200).json({ result: result})
+    
+    res.status(200).json({ result: "success yeah :)"})
   }
 }

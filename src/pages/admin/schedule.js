@@ -34,7 +34,7 @@ export default function Schedule({ users }) {
 	let userSchedule = [];
     //Database: username, shift_id: shift, work_day: day
 	const retriveSchedule = async () => {
-		const schedulefetch = await fetch('/api/schedule', {
+		const schedulefetch = await fetch('/api/updateSchedule', {
 			method: 'GET',
 			headers: {'Content-Type': 'application/json'}
 		});
@@ -54,18 +54,14 @@ export default function Schedule({ users }) {
         });
         console.log(userSchedule);
 
-	};
-/*
-    const truncateTable = async () => {
-        const truncate = await executeQuery({
-            query: 'TRUNCATE TABLE schedule',
-            value: []
-        });
-
     };
     
-	*/
-
+    const truncateTable = async () => {
+        const truncate = await fetch('/api/truncateSchedule', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
 
     const { data: session } = useSession();
     let unAuthorized = true;
@@ -92,7 +88,7 @@ export default function Schedule({ users }) {
             <Navbar name={foundUser.name} />
             <h1>Schedule</h1>
             <button onClick={retriveSchedule}>Click me</button>
-           {/*  <button onClick={truncateTable}>Truncate din mor</button> */}
+            <button onClick={truncateTable}>Truncate din mor</button>
         </>
     )
 }
