@@ -1,9 +1,10 @@
 // components/DayGridTable.js
 import React, { useState, useEffect } from 'react';
 import styles from '@/styles/dayGridTable.module.css';
+import { forEach } from 'lodash';
 
 
-const DayGridTable = ({schedule}) => {
+const DayGridTable = ({schedule, shiftName}) => {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
@@ -22,16 +23,24 @@ const DayGridTable = ({schedule}) => {
     const [displayedMonth, setDisplayedMonth] = useState(currentMonth);
     const [displayedYear, setDisplayedYear] = useState(currentYear);
 
-    console.log(new Date(currentDate));
+    let events = [];
+    console.log(schedule[0].date);
     // Hardcoded list of events
-    const events = [
+    schedule.forEach((shift) => {
+        const shift1 = shiftName.filter((shifts) => shifts.shift_id === shift.shift_id);
+        console.log(shift1);
+        events.push({ date: new Date(shift.date), description: `Shift from ${shift1[0].shift_time}`});
+    });
+
+    /* const events = [
+        { date: new Date(schedule[0].date), description: 'Shift from 6:00-14:00 department: Floor' },
         { date: new Date(currentYear, currentMonth, 5), description: 'Shift from 16:00-22:00 department: Floor' },
         { date: new Date(currentYear, currentMonth, 10), description: 'Event 2' },
         { date: new Date(currentYear, currentMonth + 1, 15), description: 'Event 3' },
         { date: new Date(currentYear, currentMonth, 20), description: 'Event 4' },
         { date: new Date(currentYear, currentMonth, 25), description: 'Event 5' },
     ];
-    
+ */    
     // Find events for a specific day
     const eventsForDay = (day) => {
         if (!day) return [];

@@ -7,23 +7,8 @@ import Loginbtn from './components/loginBtn'
 import Navbar from './components/navBar'
 import { getSession } from 'next-auth/react'
 import { executeQuery } from "../../lib/db"
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
 import DayGridTable from './components/dayGridTable'
 
-
-const mySchedule = [
-  { title: 'Shift from 8:00-16:00 department: Cashier', date: '2023-04-01' },
-  { title: 'Shift from 16:00-22:00 department: Cashier', date: '2023-04-04' },
-  { title: 'Shift from 16:00-22:00 department: Floor', date: '2023-04-07' },
-  { title: 'Shift from 8:00-16:00 department: Fruit & Green', date: '2023-04-08' },
-  { title: 'Shift from 16:00-22:00 department: Floor', date: '2023-04-10' },
-  { title: 'Shift from 8:00-16:00 department: Fruit & Green', date: '2023-04-15' },
-  { title: 'Shift from 16:00-22:00 department: Fruit & Green', date: '2023-04-18' },
-  { title: 'Shift from 8:00-16:00 department: Floor', date: '2023-04-23' },
-  { title: 'Shift from 8:00-16:00 department: Cashier', date: '2023-04-27' },
-  { title: 'Shift from 16:00-22:00 department: Floor', date: '2023-04-30' },
-]
 
 export async function getServerSideProps(ctx) {
 
@@ -41,37 +26,36 @@ export async function getServerSideProps(ctx) {
 		const userSchedule = await executeQuery({
 			query: 'SELECT * FROM schedule WHERE username = ?',
 			value: [session.user.name]
+		}) 
+
+		const shiftName = await executeQuery({
+			query: 'SELECT * FROM shifts',
+			value: []
 		})
 
-		console.log(result)
-
+		//console.log(result)
+		//console.log(userSchedule)
+		console.log(shiftName);
 		return {
 			props: {
 				result: result,
 				userSchedule: userSchedule,
+				shiftName: shiftName,
 			},
 		}
 	} else {
 		return {
 			props: {
 				result: null,
+				userSchedule: null,
+				shiftName: null,
 			},
 		}
 	}
 }
 
-export default function Home({ result, userSchedule }) {
+export default function Home({ result, userSchedule, shiftName }) {
 
-	const nextMonday = () => {
-		let d = new Date();
-		let untilNextMonday = (1 + 7 - d.getDay()) % 7;
-		if (untilNextMonday === 0) {
-			untilNextMonday = 7;
-		}
-		d.setDate(d.getDate() + untilNextMonday);
-		console.log(d.toISOString().substring(0,10));
-		return d.toISOString().substring(0,10);
-	};
 	
   return (
     <>
@@ -85,16 +69,9 @@ export default function Home({ result, userSchedule }) {
       <div className={styles.main}>
         <h1>Your Upcoming Shifts</h1>
         <div className={styles.calendar}>
-          <DayGridTable schedule={userSchedule} />
-		  <button onClick={nextMonday}>Din grimme mor</button>
-          <FullCalendar
-            plugins={[dayGridPlugin]}
-            initialView="dayGridMonth"
-            height={"100%"}
-            events={mySchedule}
-            eventClassNames={styles.event}
-            dayHeaderFormat={{ weekday: 'long' }}
-          />
+          <DayGridTable schedule={userSchedule} shiftName={shiftName}/>
+
+          
         </div>
       </div> 
     </>
