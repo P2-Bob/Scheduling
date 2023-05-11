@@ -19,44 +19,44 @@
     display: contents;
   }
   
-  .dayGridHeaderCell,
-  .dayGridCell {
+.dayGridHeaderCell,
+.dayGridCell {
     padding: 1rem;
     text-align: center;
     background-color: white;
     border: 1px solid #f0f0f0;
-  }
+}
   
-  .dayGridHeaderCell {
+.dayGridHeaderCell {
     font-weight: bold;
-  }
+}
   
-  .dayGridCell {
+.dayGridCell {
     height: 100px;
     position: relative;
-  }
+}
   
-  .dayGridCell:nth-child(1),
-  .dayGridHeaderCell:nth-child(1) {
+.dayGridCell:nth-child(1),
+.dayGridHeaderCell:nth-child(1) {
     color: #ff5252;
-  }
+}
   
-  .dayGridCell:nth-child(7),
-  .dayGridHeaderCell:nth-child(7) {
+.dayGridCell:nth-child(7),
+.dayGridHeaderCell:nth-child(7) {
     color: #007fff;
-  }
+}
   
-  .dayNumber {
+.dayNumber {
     position: absolute;
     top: 8px;
     right: 8px;
-  }
+}
 
-  .dayGridToday {
+.dayGridToday {
     background-color: #a0d6b4;
-  }
+}
 
-  .event {
+.event {
     background-color: #ffeb3b;
     border-radius: 4px;
     padding: 4px;
@@ -66,27 +66,56 @@
     text-overflow: ellipsis;
     width: 100%; /* Adjust the width based on your preference */
     word-wrap: break-word; /* Allows the text to break into multiple lines */
-  }
+}
 
-  .monthYearHeader {
+.monthYearHeader {
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
     padding-left: 1rem;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-  .arrow {
-  cursor: pointer;
-  font-size: 1.5rem;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-  background-color: #2C3E50;
-  color: #fff;
+.monthButtons {
+    display: flex;
+}
+
+.arrow {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    padding: 0.5rem;
+    margin: 0 0.5rem;
+    background-color: #2C3E50;
+    border-radius: 1rem;
+    color: #fff;
 }
 
 .arrowsContainer {
     position: absolute;
     top: 0;
     right: 0;
-  }
+}
   
+.todayButton {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    background-color: #2C3E50;
+    border-radius: 1rem;
+    color: #fff;
+    border: none;
+}
+
+.todayButton:hover,
+.arrow:hover {
+    background-color: #34495e;
+}

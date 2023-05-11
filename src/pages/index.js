@@ -33,9 +33,6 @@ export async function getServerSideProps(ctx) {
 			value: []
 		})
 
-		//console.log(result)
-		//console.log(userSchedule)
-		console.log(shiftName);
 		return {
 			props: {
 				result: result,
