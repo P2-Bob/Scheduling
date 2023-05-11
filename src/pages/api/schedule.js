@@ -34,35 +34,17 @@ export default async (req, res) => {
         let date = null;
 
         //d.toISOString().substring(0,10);
-        
-        Object.keys(schedule).forEach((day) => {
+        const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        daysOfWeek.forEach((day, index) => {
             const dayShifts = schedule[day];
 
-            switch (day) {
-                case "Monday":
-                    date = nextMonday();
-                    break;
-                case "Tuesday":
-                    date.setDate(date.getDate() + 1);
-                    break;
-                case "Wednesday":
-                    date.setDate(date.getDate() + 2);
-                    break;
-                case "Thursday":
-                    date.setDate(date.getDate() + 3);
-                    break;
-                case "Friday":
-                    date.setDate(date.getDate() + 4);
-                    break;
-                case "Saturday":
-                    date.setDate(date.getDate() + 5);
-                    break;
-                case "Sunday":
-                    date.setDate(date.getDate() + 6);
-                    break;
+            if (index === 0) { // If it's the first day (Monday)
+                date = nextMonday();
+            } else { // For every other day, just add 1 day to the previous date
+                date.setDate(date.getDate() + 1);
             }
 
-            Object.keys(schedule[day]).forEach((shift) => {
+            Object.keys(dayShifts).forEach((shift) => {
                 const users = dayShifts[shift];
                 if (shift === "6-14")shift_id = 1;
                 if (shift === "14-22")shift_id = 2;

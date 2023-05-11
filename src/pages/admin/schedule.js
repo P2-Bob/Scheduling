@@ -54,11 +54,6 @@ export default function Schedule({ users }) {
         });
         console.log(userSchedule);
 
-        const uploadSchedule = await fetch('/api/uploadSchedule', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ schedule: userSchedule})
-        });
 	};
 /*
     const truncateTable = async () => {
