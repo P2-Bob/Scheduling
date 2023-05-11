@@ -20,6 +20,7 @@ export default async (req, res) => {
         const { schedule, fitnessValue, count } = await generateSchedule(employees, youthEmployees, preference);
         let userSchedule = [];
         let shift_id = null;
+        console.log("Employees", employees,"YouthEmployees", youthEmployees);
 
         const nextMonday = () => {
             let d = new Date();

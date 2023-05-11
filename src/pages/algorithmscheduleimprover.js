@@ -58,9 +58,29 @@ const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, 
 
 	for (let amountOfWorkersCounter = 0; amountOfWorkersCounter < amountOfWorkers; amountOfWorkersCounter++) {
 
-		pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
+		//pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
 
 
+		if ((shift === '6-14' || shift === '14-22') && day !== 'Saturday' && day !== 'Sunday') {
+            pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
+        } else {
+            if (shift === '17-22') {
+                let temprandom = Math.floor(Math.random() * 2);
+                if (temprandom === 0) {
+                    pickEmployee[amountOfWorkersCounter] = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+                } else {
+                    pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
+                }
+            }
+            if (day === 'Saturday' || day === 'Sunday') {
+                let temprandom = Math.floor(Math.random() * 2);
+                if (temprandom === 0) {
+                    pickEmployee[amountOfWorkersCounter] = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+                } else {
+                    pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
+                }
+            }
+        }
 
 
 		let validCount = 0;
@@ -252,7 +272,6 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 						}
 					}
 
-
 				}
 				if (unavailableEmployees[day].includes(schedule[day])) {
 					value -= 1000;
@@ -324,6 +343,28 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 				pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
 				console.log("pickEmployee: ", pickEmployee);
 
+				if ((shift === '6-14' || shift === '14-22') && day !== 'Saturday' && day !== 'Sunday') {
+					pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+				} else {
+					if (shift === '17-22') {
+						let temprandom = Math.floor(Math.random() * 2);
+						if (temprandom === 0) {
+							pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+						} else {
+							pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+						}
+					}
+					if (day === 'Saturday' || day === 'Sunday') {
+						let temprandom = Math.floor(Math.random() * 2);
+						if (temprandom === 0) {
+							pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+						} else {
+							pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+						}
+					}
+				}
+
+
 				let worker = null;
 				let validCount = 0;
 				let validEmployee = false;
@@ -331,24 +372,24 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 					validCount = 0
 					validEmployee = false;
 
-					if (shift === '17-22') {
-
-						let temprandom = Math.floor(Math.random() * 2);
-
-						if (temprandom === 0) {
-							pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
-						} else {
-							pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+					if ((shift === '6-14' || shift === '14-22') && day !== 'Saturday' && day !== 'Sunday') {
+						pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+					} else {
+						if (shift === '17-22') {
+							let temprandom = Math.floor(Math.random() * 2);
+							if (temprandom === 0) {
+								pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+							} else {
+								pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+							}
 						}
-					}
-
-					if (day === 'Saturday' || day === 'Sunday') {
-						let temprandom = Math.floor(Math.random() * 2);
-
-						if (temprandom === 0) {
-							pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
-						} else {
-							pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+						if (day === 'Saturday' || day === 'Sunday') {
+							let temprandom = Math.floor(Math.random() * 2);
+							if (temprandom === 0) {
+								pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
+							} else {
+								pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+							}
 						}
 					}
 
@@ -369,7 +410,7 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 
 
 					if (!validEmployee || validCount != 0) {
-						pickEmployee = worker[Math.floor(Math.random() * worker.length)].username;
+						pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
 					}
 
 
@@ -466,7 +507,7 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	fitnessValue = 0;
 	console.log("Searching for fittest schedule...");
 	let highScore = 0;
-	while (fitnessValue <= 7649) {
+	while (fitnessValue <= 6700) {
 		schedule = randomSchedule(employees, youthEmployees, preference);
 		//console.log("Total value:", fitnessValue);
 		if (fitnessValue > highScore) {
@@ -486,12 +527,12 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	
 
 
-	let swappedSchedule = bestSchedule;
+	let swappedSchedule = _.cloneDeep(bestSchedule);
 	let swappedFitnessValue = 0;
 
 	let swapTries = 0;
 	while (swappedFitnessValue < fitnessValue + 401) {
-		swappedSchedule =bestSchedule;
+		swappedSchedule = _.cloneDeep(bestSchedule);
 
 		swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
 		swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
@@ -506,7 +547,7 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	console.log("Total value:", fitnessValue);
 	console.log("Swapped Fitness", swappedFitnessValue);
 	console.log("Swapped Schedule", swappedSchedule);
-	
+
 	return Promise.resolve({schedule: swappedSchedule, fitnessValue: swappedFitnessValue, count: swapTries})
 };
 
