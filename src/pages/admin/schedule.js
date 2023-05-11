@@ -32,13 +32,11 @@ export default function Schedule({ users }) {
 
     let schedule = [];
 	let userSchedule = [];
-    let weekNumber = 1;
     //Database: username, shift_id: shift, work_day: day
 	const retriveSchedule = async () => {
 		const schedulefetch = await fetch('/api/schedule', {
-			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({weekNumber: weekNumber})
+			method: 'GET',
+			headers: {'Content-Type': 'application/json'}
 		});
 
 		if (!schedulefetch.ok) {alert("Error fetching schedule data")};
@@ -62,8 +60,16 @@ export default function Schedule({ users }) {
             body: JSON.stringify({ schedule: userSchedule})
         });
 	};
+/*
+    const truncateTable = async () => {
+        const truncate = await executeQuery({
+            query: 'TRUNCATE TABLE schedule',
+            value: []
+        });
+
+    };
     
-	
+	*/
 
 
     const { data: session } = useSession();
@@ -91,6 +97,7 @@ export default function Schedule({ users }) {
             <Navbar name={foundUser.name} />
             <h1>Schedule</h1>
             <button onClick={retriveSchedule}>Click me</button>
+           {/*  <button onClick={truncateTable}>Truncate din mor</button> */}
         </>
     )
 }

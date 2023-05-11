@@ -22,7 +22,7 @@ const DayGridTable = ({schedule}) => {
     const [displayedMonth, setDisplayedMonth] = useState(currentMonth);
     const [displayedYear, setDisplayedYear] = useState(currentYear);
 
-
+    console.log(new Date(currentDate));
     // Hardcoded list of events
     const events = [
         { date: new Date(currentYear, currentMonth, 5), description: 'Shift from 16:00-22:00 department: Floor' },

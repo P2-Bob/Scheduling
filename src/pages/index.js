@@ -31,30 +31,47 @@ export async function getServerSideProps(ctx) {
 
   if (session) {
       // Fetch data from database
-      const result = await executeQuery({
-          query: 'SELECT * FROM users WHERE username = ?',
-          value: [session.user.name]
-      })
+		const result = await executeQuery({
+			query: 'SELECT * FROM users WHERE username = ?',
+			value: [session.user.name]
+		})
 
       // Pass data to the page via props
-      console.log(result)
 
-      return {
-          props: {
-              result: result,
-          },
-      }
-  } else {
-    return {
-      props: {
-        result: null,
-      },
-    }
-  }
+		const userSchedule = await executeQuery({
+			query: 'SELECT * FROM schedule WHERE username = ?',
+			value: [session.user.name]
+		})
+
+		console.log(result)
+
+		return {
+			props: {
+				result: result,
+				userSchedule: userSchedule,
+			},
+		}
+	} else {
+		return {
+			props: {
+				result: null,
+			},
+		}
+	}
 }
 
-export default function Home({ result }) {
+export default function Home({ result, userSchedule }) {
 
+	const nextMonday = () => {
+		let d = new Date();
+		let untilNextMonday = (1 + 7 - d.getDay()) % 7;
+		if (untilNextMonday === 0) {
+			untilNextMonday = 7;
+		}
+		d.setDate(d.getDate() + untilNextMonday);
+		console.log(d.toISOString().substring(0,10));
+		return d.toISOString().substring(0,10);
+	};
 	
   return (
     <>
@@ -69,6 +86,7 @@ export default function Home({ result }) {
         <h1>Your Upcoming Shifts</h1>
         <div className={styles.calendar}>
           <DayGridTable schedule={userSchedule} />
+		  <button onClick={nextMonday}>Din grimme mor</button>
           <FullCalendar
             plugins={[dayGridPlugin]}
             initialView="dayGridMonth"

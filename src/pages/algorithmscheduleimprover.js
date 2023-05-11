@@ -455,6 +455,9 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 })(); */
 
 
+
+
+
 const generateSchedule = async (employees, youthEmployees, preference) => {
 
 	let count = 0;
@@ -503,7 +506,7 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	console.log("Total value:", fitnessValue);
 	console.log("Swapped Fitness", swappedFitnessValue);
 	console.log("Swapped Schedule", swappedSchedule);
-
+	
 	return Promise.resolve({schedule: swappedSchedule, fitnessValue: swappedFitnessValue, count: swapTries})
 };
 
