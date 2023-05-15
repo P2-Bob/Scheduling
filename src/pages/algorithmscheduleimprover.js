@@ -1,7 +1,7 @@
+
 const mysql = require('mysql2');
 const _ = require('lodash');
-//const { em } = require('@fullcalendar/core/internal-common');
-// const { co } = require('@fullcalendar/core/internal-common');
+
 
 
 const employees1 = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Fred', 'Grace', 'Helen', 'Irene', 'Jack', 'Kelly', 'Larry', 'Mallory', 'Nora', 'Oscar', 'Peggy', 'Quinn', 'Robert'];
@@ -230,12 +230,20 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 
 const fitness = (schedule, employees, youthEmployees, preference) => {
 	let value = 0;
+	let counterHasEmployee = 0;
 
 	for (const day in schedule) {
 		for (const shift in schedule[day]) {
 			for (const employee of schedule[day][shift]) {
 				const hasEmployee = employees.some((e) => e.username === employee);
 				const hasYouthEmployee = youthEmployees.some((e) => e.username === employee);
+				if ((shift === '6-14' || shift === '14-22') && (day === 'Saturday' || day === 'Sunday')) {
+					counterHasEmployee++;
+					if (counterHasEmployee === 0) {
+						value -= 1000;
+						counterHasEmployee = 0;
+					}
+				}
 				if (hasEmployee) {
 					value += 100;
 					
@@ -483,7 +491,7 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	console.log("Searching for fittest schedule...");
 	let highScore = 0;
 
-	while (fitnessValue <= 6700) {
+	while (fitnessValue <= 7000) {
 		console.log("før", unavailableEmployees);
 		schedule = randomSchedule(employees, youthEmployees, preference);
 		fitnessValue = fitness(schedule, employees, youthEmployees, preference);
