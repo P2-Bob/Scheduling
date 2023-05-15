@@ -173,30 +173,30 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 			for (const employeeObj of employees) {
 				const employeeName = employeeObj.username;
 				if (tempSchedule[day][shift].includes(employeeName)) {
-					console.log(employeeName);
-					console.log(tempSchedule[day][shift]);
+					//console.log(employeeName);
+					//console.log(tempSchedule[day][shift]);
 					const lastshift = shift.split('-')[1];
 					const lastShiftDay = day;
 					const lastWorked = { day: lastShiftDay, shift: lastshift, employee: employeeName};
 					lastWorkedObj.push(lastWorked);
 					let shiftsWorked = lastWorkedObj.filter((obj) => obj.employee === employeeName);
-					console.log(shiftsWorked);
+					//console.log(shiftsWorked);
 					for (const shift in shiftsWorked) {
-						console.log(shift);
-						console.log(shiftsWorked[shift].shift);
+						//console.log(shift);
+						//console.log(shiftsWorked[shift].shift);
 						const firstShift = shiftsWorked[shift].shift
 						const nowShift = shiftsWorked[shift].shift
 						//Check what time the shift was worked
 						//if they had a shift that ended at 22 then the cant work at the day after at 6
 						
 					}
-					console.log(lastWorked);
-					console.log(tempSchedule[day][shift].includes(employeeName));
+					//console.log(lastWorked);
+					//console.log(tempSchedule[day][shift].includes(employeeName));
 				}
 			}
 		}
 	}
-	console.log(lastWorkedObj);
+	//console.log(lastWorkedObj);
 }
 
 
@@ -285,6 +285,8 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 };
 
 const randomSchedule = (employees, youthEmployees, preference) => {
+
+
 	const schedule = {};
 
 	for (let daysLength = 0; daysLength < days.length; daysLength++) {
@@ -303,8 +305,10 @@ const randomSchedule = (employees, youthEmployees, preference) => {
 
 
 	//console.log("Kig her: ", unavailableEmployees);
-	fitnessValue = fitness(schedule, employees, youthEmployees, preference);
+	//fitnessValue = fitness(schedule, employees, youthEmployees, preference);
 	bestUnavailableEmployees = _.cloneDeep(unavailableEmployees)
+	console.log("bestUnavailable", bestUnavailableEmployees)
+
 
 	unavailableEmployees = {
 		"Monday": [],
@@ -333,47 +337,20 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 			let tempSwap = [];
 			let randomSwap = Math.floor(Math.random() * 2);
 			let pickEmployee;
-
-			if (randomSwap === 0) {
-
-				tempSwap = swappedSchedule[day][shift];
-
-
+			console.log("randomSwap: ", randomSwap);
+			if (randomSwap === 1) {
+				tempSwap = bestSchedule[day][shift];
 				let randomEmployeePicker = Math.floor(Math.random() * amountOfWorkers);
 				pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
-				console.log("pickEmployee: ", pickEmployee);
-
-				if ((shift === '6-14' || shift === '14-22') && day !== 'Saturday' && day !== 'Sunday') {
-					pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
-				} else {
-					if (shift === '17-22') {
-						let temprandom = Math.floor(Math.random() * 2);
-						if (temprandom === 0) {
-							pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
-						} else {
-							pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
-						}
-					}
-					if (day === 'Saturday' || day === 'Sunday') {
-						let temprandom = Math.floor(Math.random() * 2);
-						if (temprandom === 0) {
-							pickEmployee = youthEmployees[Math.floor(Math.random() * youthEmployees.length)].username;
-						} else {
-							pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
-						}
-					}
-				}
-
-
 				let worker = null;
 				let validCount = 0;
 				let validEmployee = false;
 				while (!validEmployee || validCount != 0) {
 					validCount = 0
 					validEmployee = false;
-
 					if ((shift === '6-14' || shift === '14-22') && day !== 'Saturday' && day !== 'Sunday') {
 						pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+						//console.log("pickEmployee2: ", pickEmployee);
 					} else {
 						if (shift === '17-22') {
 							let temprandom = Math.floor(Math.random() * 2);
@@ -397,50 +374,48 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 						worker = youthEmployees;
 					} else { worker = employees; }
 
-					//console.log(pickEmployee);
 					validEmployee = sameEmployeeCheckShift(pickEmployee, 1, worker);
-					//console.log(pickEmployee);
 
-					//console.log(unavailableEmployees);
 					if (bestUnavailableEmployees[day].includes(pickEmployee)) {
 						validCount++;
-						console.log("hejjjjj");
-					}
+					} 
 
 
 
 					if (!validEmployee || validCount != 0) {
 						pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
 					}
-
-
+					
 				}
-
+				console.log(pickEmployee);
 				
 				let beforeSwapEmployee = tempSwap[randomEmployeePicker];
 				console.log("before:", beforeSwapEmployee);
 				console.log("after:", pickEmployee);
 
-
-				var index = bestUnavailableEmployees[day].indexOf(beforeSwapEmployee);
+				let index = bestUnavailableEmployees[day].indexOf(beforeSwapEmployee);
+				//console.log(bestUnavailableEmployees[day])
 				if (index !== -1) {
 					bestUnavailableEmployees[day].splice(index, 1);
 				}
+				
 
 				tempSwap[randomEmployeePicker] = pickEmployee;
 				swappedSchedule[day][shift] = tempSwap;
 
-
+				//console.log("her", pickEmployee);
+				console.log("best grimme mødre1", bestUnavailableEmployees[day]);
 				bestUnavailableEmployees[day] = bestUnavailableEmployees[day].concat(pickEmployee);
-
+				console.log("best grimme mødre2", bestUnavailableEmployees[day]);
+				break;
+				//console.log("best grimme mødre2", bestUnavailableEmployees[day]);
 			}
 		}
 
 	}
 	console.log(bestUnavailableEmployees);
 	return swappedSchedule;
-}
-
+} 
 
 
 /* (async () => {
@@ -507,12 +482,18 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	fitnessValue = 0;
 	console.log("Searching for fittest schedule...");
 	let highScore = 0;
+
 	while (fitnessValue <= 6700) {
+		console.log("før", unavailableEmployees);
 		schedule = randomSchedule(employees, youthEmployees, preference);
+		fitnessValue = fitness(schedule, employees, youthEmployees, preference);
+		//console.log("efter",bestUnavailableEmployees);
 		//console.log("Total value:", fitnessValue);
 		if (fitnessValue > highScore) {
 			highScore = fitnessValue;
-			bestSchedule = schedule;
+			bestSchedule = _.cloneDeep(schedule);
+			//bestUnavailableEmployees = _.cloneDeep(unavailableEmployees)
+			console.log("efter",bestUnavailableEmployees);
 			console.log("This is the current fittest schedule:", schedule);
 			console.log("New high score:", highScore);
 			console.log("Population:", count);
@@ -523,7 +504,7 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	console.log("This is the fittest schedule:", schedule);
 	console.log("Total value:", fitnessValue);
 	console.log("Population:", count);
-	console.log("Lille check", getOverworkedEmployeeCheck(schedule, employees, youthEmployees));
+	//console.log("Lille check", getOverworkedEmployeeCheck(schedule, employees, youthEmployees));
 	
 
 
@@ -531,10 +512,10 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	let swappedFitnessValue = 0;
 
 	let swapTries = 0;
-	while (swappedFitnessValue < fitnessValue + 401) {
+	while (swappedFitnessValue < fitnessValue + 201) {
 		swappedSchedule = _.cloneDeep(bestSchedule);
 
-		swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
+		swappedSchedule = randomEmployeeSwap(amountOfWorkers, employees, youthEmployees, preference, bestSchedule, swappedSchedule);
 		swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
 		console.log("Swapped Fitness", swappedFitnessValue);
 		
