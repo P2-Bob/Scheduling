@@ -132,9 +132,9 @@ export default function Schedule({ users, shiftName }) {
                     </div>
                     <button onClick={retriveSchedule}>Click me</button>
                     <button onClick={truncateTable}>Truncate din mor</button>
-                    <div className={styles.calendar}> 
+                    {/* <div className={styles.calendar}> 
                         <WeekGridTable schedule={userSchedule} shiftName={shiftName} users={users}/>
-                    </div>
+                    </div> */}
                 </div>
             </>
         )

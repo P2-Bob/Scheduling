@@ -74,10 +74,17 @@ export default function Home({ result, userSchedule, shiftName }) {
 						<div className={styles.shiftList}>
 							{userSchedule.map((shift) => {
 								const shift1 = shiftName.filter((shifts) => shifts.shift_id === shift.shift_id);
+								const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+								const date = new Date(shift.date);
+								const weekday = weekdays[date.getDay()];
+								const shiftTime = shift1[0].shift_time.replace("-", ":00 - ") + ":00";
 								return (
-									<div className={styles.shift} key={shift.id}>
-										<h2>{shift1[0].shift_time}</h2>
-										<h3>{shift.date}</h3>
+									<div className={styles.shift} key={shift.schedule_id}>
+										<div className={styles.dateContainer}>
+											<h3>{weekday}</h3>
+											<h3>{date.toLocaleDateString()}</h3>
+										</div>
+										<h2>{shiftTime}</h2>
 									</div>
 								)
 							})}
