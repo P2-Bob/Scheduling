@@ -129,3 +129,32 @@
 .arrow:hover {
     background-color: #34495e;
 }
+
+
+@media (max-width: 1024px) {
+    .dayGridHeaderCell,
+    .dayGridCell,
+    .dayGridCellWeek {
+        padding: 0.5rem;  /* Reduce padding */
+        text-align: center;
+        background-color: white;
+        border: 1px solid #f0f0f0;
+    }
+  
+    .dayGridCell {
+        height: 80px;  /* Reduce height */
+        position: relative;
+    }
+  
+    .event {
+        font-size: 10px;  /* Reduce font size */
+        padding: 2px;  /* Reduce padding */
+        margin-top: 5px;  /* Reduce margin */
+    }
+  
+    .monthYearHeader {
+        font-size: 1.2rem;  /* Reduce font size */
+        margin-bottom: 1rem;
+        padding-left: 0.5rem;  /* Reduce padding */
+    }
+  }

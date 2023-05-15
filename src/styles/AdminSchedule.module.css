@@ -1,0 +1,27 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 90vh;
+  padding-top: 2rem;
+  background-color: #f0f0f0;
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 1rem;
+}
+
+.calendar {
+  width: 70%;
+  height: 90%;
+}
+
+.event {
+  white-space: normal;
+  padding: 0.5rem;
+}

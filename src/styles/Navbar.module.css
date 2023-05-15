@@ -27,3 +27,59 @@
     font-size: 1rem;
     font-weight: 500;
 }
+
+.menuBar,
+.menuBarClose {
+    display: none;
+    flex-direction: column;
+    row-gap: 6px;
+    cursor: pointer;
+    position: absolute;
+    right: 2rem;
+    font-size: 2.5rem;
+}
+
+.menuBar div,
+.menuBarClose div {
+    width: 40px;
+    height: 4px;
+    background-color: white;
+    border-radius: 2px;
+}
+
+.menuBarClose div:nth-child(1) {
+    transform: rotate(45deg);
+}
+
+.menuBarClose div:nth-child(2) {
+    transform: rotate(-45deg);
+
+}
+
+.menuList{
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    height: 100vh;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem;
+    font-size: 2rem;
+    background-color: #192533;
+}
+
+.menuActive {
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .hideOnTablet {
+        display: none;
+    }
+    .menuBar,
+    .menuBarClose {
+        display: flex;
+    }
+}
