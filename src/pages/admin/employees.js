@@ -310,7 +310,7 @@ export default function employees({ users, departments }) {
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
-                <Navbar name={foundUser.name} />
+                <Navbar user={foundUser} />
                 <div className={styles.main}>
                     <div className={styles.headerInfo}>
                         <h1>Employee Section</h1>

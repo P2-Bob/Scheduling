@@ -10,6 +10,13 @@
     right: 2rem;
 }
 
+.loggedInMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
 .loggedIn:hover {
     background-color: #2B3746;
 }
@@ -25,13 +32,15 @@
     height: 2rem;
 }
 
-.name {
+.name,
+.nameMobile {
     font-size: 1rem;
     font-weight: 500;
     color: #fff;
 }
 
-.avatar {
+.avatar,
+.avatarMobile {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
@@ -40,6 +49,17 @@
     text-align: center;
     line-height: 2rem;
     font-size: 0.75rem;
+}
+
+.avatarMobile {
+    width: 5rem;
+    height: 5rem;
+    line-height: 5rem;
+    font-size: 2rem;
+}
+
+.nameMobile {
+    font-size: 2rem;
 }
 
 .dropDown {
@@ -63,4 +83,29 @@
 
 .dropDownItem:hover {
     background-color: #f2f2f2;
+}
+
+.signOut {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    color: #fff;
+    background-color: #2B3746;
+    border-radius: 0.5rem;
+}
+
+.signOut:hover {
+    background-color: #1e2a38;
+}
+  
+@media (max-width: 1023px) {
+    .hideOnMobile {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .hideOnTablet {
+        display: none;
+    }
 }

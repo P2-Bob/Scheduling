@@ -5,7 +5,7 @@ import styles from '@/styles/Home.module.css'
 import { signIn } from 'next-auth/react'
 import Loginbtn from './components/loginBtn'
 import Navbar from './components/navBar'
-import { getSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import { executeQuery } from "../../lib/db"
 import WeekGridTable from './components/weekGridTable'
 
@@ -14,14 +14,6 @@ export async function getServerSideProps(ctx) {
   	const session = await getSession(ctx);
 
   	if (session) {
-      	// Fetch data from database
-		const result = await executeQuery({
-			query: 'SELECT * FROM users WHERE username = ?',
-			value: [session.user.name]
-		})
-
-      	// Pass data to the page via props
-
 		const userSchedule = await executeQuery({
 			query: 'SELECT * FROM schedule',
 			value: []
@@ -39,7 +31,6 @@ export async function getServerSideProps(ctx) {
 	  
 		return {
 			props: {
-				result: result,
 				userSchedule: userSchedule,
 				shiftName: shiftName,
 				users: users,
@@ -48,7 +39,6 @@ export async function getServerSideProps(ctx) {
 	} else {
 		return {
 			props: {
-				result: null,
 				userSchedule: null,
 				shiftName: null,
 				users: null,
@@ -57,8 +47,13 @@ export async function getServerSideProps(ctx) {
 	}
 }
 
-export default function Home({ result, userSchedule, shiftName, users }) {
+export default function Home({ userSchedule, shiftName, users }) {
 
+	const { data: session } = useSession();
+	let foundUser = null;
+    if (session) {
+        foundUser = users.find(user => user.username === session.user.name);
+    }
 	
   return (
     <>
@@ -68,13 +63,11 @@ export default function Home({ result, userSchedule, shiftName, users }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Navbar name={result[0].name} />
+      <Navbar user={foundUser} />
       <div className={styles.main}>
         <h1>Your Upcoming Shifts</h1>
         <div className={styles.calendar}>
           <WeekGridTable schedule={userSchedule} shiftName={shiftName} users={users} />
-
-          
         </div>
       </div> 
     </>

@@ -108,7 +108,7 @@ export default function Admin({ result }) {
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
-                <Navbar name={result[0].name} />
+                <Navbar user={result[0]} />
                 <div className={styles.main}>
                     <h1>Administration Panel</h1>
                     <p>Welcome to the admin panel, what do you wanna do?</p>
