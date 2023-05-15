@@ -166,67 +166,88 @@ const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) =>
 }
 
 const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
-	const tempSchedule = schedule;
+	const tempSchedule = _.cloneDeep(schedule);
 	const lastWorkedObj = [];
+	
 	for (const day in tempSchedule) {
 		for (const shift in tempSchedule[day]) {
 			for (const employeeObj of employees) {
 				const employeeName = employeeObj.username;
-				if (tempSchedule[day][shift].includes(employeeName)) {
-					//console.log(employeeName);
-					//console.log(tempSchedule[day][shift]);
-					const lastshift = shift.split('-')[1];
-					const lastShiftDay = day;
-					const lastWorked = { day: lastShiftDay, shift: lastshift, employee: employeeName};
-					lastWorkedObj.push(lastWorked);
-					let shiftsWorked = lastWorkedObj.filter((obj) => obj.employee === employeeName);
-					//console.log(shiftsWorked);
-					for (const shift in shiftsWorked) {
-						//console.log(shift);
-						//console.log(shiftsWorked[shift].shift);
-						const firstShift = shiftsWorked[shift].shift
-						const nowShift = shiftsWorked[shift].shift
-						//Check what time the shift was worked
-						//if they had a shift that ended at 22 then the cant work at the day after at 6
-						
+				
+				if (tempSchedule[day]['6-14'].includes(employeeName)) 
+				{
+					let previousDay;
+					switch (day) {
+						case 'Monday':
+							previousDay = 'Sunday';
+							break;
+						case 'Tuesday':
+							previousDay = 'Monday';
+							break;
+						case 'Wednesday':
+							previousDay = 'Tuesday';
+							break;
+						case 'Thursday':
+							previousDay = 'Wednesday';
+							break;
+						case 'Friday':
+							previousDay = 'Thursday';
+							break;
+						case 'Saturday':
+							previousDay = 'Friday';
+							break;
+						case 'Sunday':
+							previousDay = 'Saturday';
+							break;
 					}
-					//console.log(lastWorked);
-					//console.log(tempSchedule[day][shift].includes(employeeName));
+					if (tempSchedule[previousDay]['14-22'].includes(employeeName) || tempSchedule[previousDay]['17-22'].includes(employeeName)) {
+						//console.log(employeeName + ' is overworked');
+						return false;
+					}
+				}
+
+			}
+		
+			for (const employeeObj of youthEmployees) {
+				const employeeName = employeeObj.username;
+				
+				if (tempSchedule[day]['6-14'].includes(employeeName)) 
+				{
+					let previousDay;
+					switch (day) {
+						case 'Monday':
+							previousDay = 'Sunday';
+							break;
+						case 'Tuesday':
+							previousDay = 'Monday';
+							break;
+						case 'Wednesday':
+							previousDay = 'Tuesday';
+							break;
+						case 'Thursday':
+							previousDay = 'Wednesday';
+							break;
+						case 'Friday':
+							previousDay = 'Thursday';
+							break;
+						case 'Saturday':
+							previousDay = 'Friday';
+							break;
+						case 'Sunday':
+							previousDay = 'Saturday';
+							break;
+					}
+					if (tempSchedule[previousDay]['14-22'].includes(employeeName) || tempSchedule[previousDay]['17-22'].includes(employeeName)) {
+						//console.log(employeeName + ' is overworked');
+						return false;
+					}
 				}
 			}
 		}
+		
 	}
-	//console.log(lastWorkedObj);
+	
 }
-
-
-
-// const sameEmployeeCheckDay = (schedule, day, pickEmployee, amountOfWorkersCounter, shift, worker) => {
-
-
-//   let tempshift = shifts[shifts.indexOf(shift) - 1];
-
-//   localValidEmployee = false;
-//   while (!localValidEmployee) {
-//     let tempCheck = 0;
-
-//     if (schedule[day][tempshift]) {
-//       if (schedule[day][tempshift].includes(pickEmployee[amountOfWorkersCounter])) {
-//         tempCheck++;
-//         pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
-//       }
-//     }
-//     if (sameEmployeeCheckShift(pickEmployee, amountOfWorkersCounter, worker)) {
-//     } else {
-//       tempCheck++;
-//     }
-
-//     if (tempCheck === 0) {
-//       localValidEmployee = true;
-//     } else sameEmployeeCheckDay(schedule, day, pickEmployee, amountOfWorkersCounter, shift, worker);
-
-//   }
-// }
 
 const fitness = (schedule, employees, youthEmployees, preference) => {
 	let value = 0;
@@ -240,7 +261,7 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 				if ((shift === '6-14' || shift === '14-22') && (day === 'Saturday' || day === 'Sunday')) {
 					counterHasEmployee++;
 					if (counterHasEmployee === 0) {
-						value -= 1000;
+						value -= 10000;
 						counterHasEmployee = 0;
 					}
 				}
@@ -283,10 +304,14 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 				}
 				if (unavailableEmployees[day].includes(schedule[day])) {
 					value -= 1000;
-					console.log("hej");
+					//console.log("hej");
 				}
 			}
 		}
+	}
+	
+	if (getOverworkedEmployeeCheck(schedule, employees, youthEmployees) === false){
+		value -= 10000;
 	}
 
 	return value;
@@ -315,7 +340,7 @@ const randomSchedule = (employees, youthEmployees, preference) => {
 	//console.log("Kig her: ", unavailableEmployees);
 	//fitnessValue = fitness(schedule, employees, youthEmployees, preference);
 	bestUnavailableEmployees = _.cloneDeep(unavailableEmployees)
-	console.log("bestUnavailable", bestUnavailableEmployees)
+	//console.log("bestUnavailable", bestUnavailableEmployees)
 
 
 	unavailableEmployees = {
@@ -345,7 +370,7 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 			let tempSwap = [];
 			let randomSwap = Math.floor(Math.random() * 2);
 			let pickEmployee;
-			console.log("randomSwap: ", randomSwap);
+			//console.log("randomSwap: ", randomSwap);
 			if (randomSwap === 1) {
 				tempSwap = bestSchedule[day][shift];
 				let randomEmployeePicker = Math.floor(Math.random() * amountOfWorkers);
@@ -395,11 +420,11 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 					}
 					
 				}
-				console.log(pickEmployee);
+				//console.log(pickEmployee);
 				
 				let beforeSwapEmployee = tempSwap[randomEmployeePicker];
-				console.log("before:", beforeSwapEmployee);
-				console.log("after:", pickEmployee);
+				//console.log("before:", beforeSwapEmployee);
+				//console.log("after:", pickEmployee);
 
 				let index = bestUnavailableEmployees[day].indexOf(beforeSwapEmployee);
 				//console.log(bestUnavailableEmployees[day])
@@ -412,16 +437,16 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 				swappedSchedule[day][shift] = tempSwap;
 
 				//console.log("her", pickEmployee);
-				console.log("best grimme mødre1", bestUnavailableEmployees[day]);
+				//console.log("best grimme mødre1", bestUnavailableEmployees[day]);
 				bestUnavailableEmployees[day] = bestUnavailableEmployees[day].concat(pickEmployee);
-				console.log("best grimme mødre2", bestUnavailableEmployees[day]);
+				//console.log("best grimme mødre2", bestUnavailableEmployees[day]);
 				break;
 				//console.log("best grimme mødre2", bestUnavailableEmployees[day]);
 			}
 		}
 
 	}
-	console.log(bestUnavailableEmployees);
+	//console.log(bestUnavailableEmployees);
 	return swappedSchedule;
 } 
 
@@ -491,8 +516,8 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	console.log("Searching for fittest schedule...");
 	let highScore = 0;
 
-	while (fitnessValue <= 7000) {
-		console.log("før", unavailableEmployees);
+	while (fitnessValue <= 7200) {
+		//console.log("før", unavailableEmployees);
 		schedule = randomSchedule(employees, youthEmployees, preference);
 		fitnessValue = fitness(schedule, employees, youthEmployees, preference);
 		//console.log("efter",bestUnavailableEmployees);
@@ -501,10 +526,10 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 			highScore = fitnessValue;
 			bestSchedule = _.cloneDeep(schedule);
 			//bestUnavailableEmployees = _.cloneDeep(unavailableEmployees)
-			console.log("efter",bestUnavailableEmployees);
-			console.log("This is the current fittest schedule:", schedule);
-			console.log("New high score:", highScore);
-			console.log("Population:", count);
+			//console.log("efter",bestUnavailableEmployees);
+			//console.log("This is the current fittest schedule:", schedule);
+			//console.log("New high score:", highScore);
+			//console.log("Population:", count);
 
 		}
 		count++;
@@ -520,12 +545,12 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	let swappedFitnessValue = 0;
 
 	let swapTries = 0;
-	while (swappedFitnessValue < fitnessValue + 201) {
+	while (swappedFitnessValue < fitnessValue + 101) {
 		swappedSchedule = _.cloneDeep(bestSchedule);
 
 		swappedSchedule = randomEmployeeSwap(amountOfWorkers, employees, youthEmployees, preference, bestSchedule, swappedSchedule);
 		swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
-		console.log("Swapped Fitness", swappedFitnessValue);
+		//console.log("Swapped Fitness", swappedFitnessValue);
 		
 		//const overworkedEmployeeCheck = OverworkedEmployeeCheck(swappedSchedule, day, pickEmployee, amountOfWorkersCounter, shift, employees);
 
@@ -536,6 +561,7 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	console.log("Total value:", fitnessValue);
 	console.log("Swapped Fitness", swappedFitnessValue);
 	console.log("Swapped Schedule", swappedSchedule);
+	//console.log("Lille check", getOverworkedEmployeeCheck(swappedSchedule, employees, youthEmployees));
 
 	return Promise.resolve({schedule: swappedSchedule, fitnessValue: swappedFitnessValue, count: swapTries})
 };
