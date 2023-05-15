@@ -172,8 +172,7 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 	for (const day in tempSchedule) {
 		for (const shift in tempSchedule[day]) {
 			for (const employeeObj of employees) {
-				const employeeName = employeeObj.username;
-				
+				const employeeName = employeeObj.username;				
 				if (tempSchedule[day]['6-14'].includes(employeeName)) 
 				{
 					let previousDay;
@@ -243,29 +242,100 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 					}
 				}
 			}
-		}
-		
+		}	
 	}
-	
+	return true;
 }
+
+
+const daysInARow = (schedule, employees) => {
+	const lastWorkedObj = [];
+	let inARowCounter = 0;
+	for (const day in schedule) {
+		for (const shift in schedule[day]) {
+			for (const employeeObj of employees) {
+				if (schedule[day][shift].includes(employeeObj.username)) {
+					inARowCounter++;
+					const employeeName = employeeObj.username;
+					const lastWorked = { day: day, shift: shift, DaysinARow: inARowCounter, employee: employeeName};
+					lastWorkedObj.push(lastWorked);
+					if (inARowCounter > 6) {
+						return false;
+					}
+				}
+			}
+			inARowCounter = 0;
+		}
+	}
+	return true;
+};
+
+/* const lastWorkedRow = (schedule, youthEmployees) => {
+	let employeesWithoutConsecutiveDaysOff = [];
+	
+	let offInARowCounter = 0;
+	for (const day in schedule) {
+		for (const shift in schedule[day]) {
+			for (const employeeObj of youthEmployees) {
+				if (!(schedule[day].includes(employeeObj.username))) {
+
+					let previousDay;
+					console.log("hallo din bums")
+					switch (day) {
+						case 'Monday':
+							previousDay = 'Sunday';
+							break;
+						case 'Tuesday':
+							previousDay = 'Monday';
+							break;
+						case 'Wednesday':
+							previousDay = 'Tuesday';
+							break;
+						case 'Thursday':
+							previousDay = 'Wednesday';
+							break;
+						case 'Friday':
+							previousDay = 'Thursday';
+							break;
+						case 'Saturday':
+							previousDay = 'Friday';
+							break;
+						case 'Sunday':
+							previousDay = 'Saturday';
+							break;
+					}
+					if (!(schedule[previousDay].includes(employeeObj.username))) {
+						offInARowCounter++;
+						if (offInARowCounter === 1) {
+							//console.log(offInARowCounter)
+						}
+					}
+				}
+			}
+			offInARowCounter = 0;
+		}
+	}
+}; */
 
 const fitness = (schedule, employees, youthEmployees, preference) => {
 	let value = 0;
 	let counterHasEmployee = 0;
-
 	for (const day in schedule) {
 		for (const shift in schedule[day]) {
 			for (const employee of schedule[day][shift]) {
 				const hasEmployee = employees.some((e) => e.username === employee);
 				const hasYouthEmployee = youthEmployees.some((e) => e.username === employee);
-				if ((shift === '6-14' || shift === '14-22') && (day === 'Saturday' || day === 'Sunday')) {
-					counterHasEmployee++;
-					if (counterHasEmployee === 0) {
-						value -= 10000;
-						counterHasEmployee = 0;
-					}
-				}
 				if (hasEmployee) {
+					counterHasEmployee = 0;
+					if ((day === 'Saturday' || day === 'Sunday') && shift === '6-14' || shift === '14-22') {
+						counterHasEmployee++;
+						//console.log(counterHasEmployee);
+						console.log(value)
+						if (counterHasEmployee < 3) {
+							value -= 10000;
+							counterHasEmployee = 0;
+						}
+					}
 					value += 100;
 					
 					const employeePreference = preference.find((p) => p.username === employee);
@@ -314,6 +384,10 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 		value -= 10000;
 	}
 
+	if (daysInARow(schedule, employees) === false) {
+		value -= 10000;
+	}
+
 	return value;
 };
 
@@ -356,7 +430,6 @@ const randomSchedule = (employees, youthEmployees, preference) => {
 
 	return schedule;
 }
-
 
 
 const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preference, bestSchedule, swappedSchedule) => {
@@ -451,62 +524,6 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 } 
 
 
-/* (async () => {
-	const employees = await employess('SELECT username FROM users WHERE age >= 18');
-	const youthEmployees = await employess('SELECT username FROM users WHERE age < 18');
-	const preference = await employess('SELECT * FROM preference');
-
-	let count = 0;
-	let schedule = {};
-	let bestSchedule = {};
-	console.log("Searching for fittest schedule...");
-	let highScore = 0;
-	while (fitnessValue <= 7500) {
-		schedule = randomSchedule(employees, youthEmployees, preference);
-		//console.log("Total value:", fitnessValue);
-		if (fitnessValue > highScore) {
-			highScore = fitnessValue;
-			bestSchedule = schedule;
-			console.log("This is the current fittest schedule:", schedule);
-			console.log("New high score:", highScore);
-			console.log("Population:", count);
-
-		}
-		count++;
-	}
-	console.log("This is the fittest schedule:", schedule);
-	console.log("Total value:", fitnessValue);
-	console.log("Population:", count);
-	console.log("Lille check", getOverworkedEmployeeCheck(schedule, employees, youthEmployees));
-	
-
-
-	let swappedSchedule = _.cloneDeep(bestSchedule);
-	let swappedFitnessValue = 0;
-
-	let swapTries = 0;
-	while (swappedFitnessValue < fitnessValue + 1) {
-		swappedSchedule = _.cloneDeep(bestSchedule);
-
-		swappedSchedule = randomEmployeeSwap(amountOfWorkers, youthEmployees, employees, preference, bestSchedule, swappedSchedule);
-		swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
-		console.log("Swapped Fitness", swappedFitnessValue);
-		
-		//const overworkedEmployeeCheck = OverworkedEmployeeCheck(swappedSchedule, day, pickEmployee, amountOfWorkersCounter, shift, employees);
-
-		swapTries++;
-
-	}
-	console.log("Tries:", swapTries);
-	console.log("Total value:", fitnessValue);
-	console.log("Swapped Fitness", swappedFitnessValue);
-	console.log("Swapped Schedule", swappedSchedule);
-})(); */
-
-
-
-
-
 const generateSchedule = async (employees, youthEmployees, preference) => {
 
 	let count = 0;
@@ -561,7 +578,7 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 	console.log("Total value:", fitnessValue);
 	console.log("Swapped Fitness", swappedFitnessValue);
 	console.log("Swapped Schedule", swappedSchedule);
-	//console.log("Lille check", getOverworkedEmployeeCheck(swappedSchedule, employees, youthEmployees));
+	//console.log("Lille check", lastWorkedRow(swappedSchedule, youthEmployees));
 
 	return Promise.resolve({schedule: swappedSchedule, fitnessValue: swappedFitnessValue, count: swapTries})
 };
