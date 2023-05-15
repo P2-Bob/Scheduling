@@ -42,13 +42,13 @@
     position: relative;
 }
   
-.dayGridCell:nth-child(1),
-.dayGridHeaderCell:nth-child(1) {
+.dayGridCell:nth-child(7),
+.dayGridHeaderCell:nth-child(7) {
     color: #ff5252;
 }
   
-.dayGridCell:nth-child(7),
-.dayGridHeaderCell:nth-child(7) {
+.dayGridCell:nth-child(6),
+.dayGridHeaderCell:nth-child(6) {
     color: #007fff;
 }
   

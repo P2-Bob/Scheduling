@@ -10,7 +10,7 @@ const DayGridTable = ({schedule, shiftName}) => {
     const today = currentDate.getDate();
     
 
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     
     // Get the current month and year as a string
     const monthYearString = (month, year) => {
@@ -47,10 +47,11 @@ const DayGridTable = ({schedule, shiftName}) => {
         const firstDayOfMonth = new Date(displayedYear, displayedMonth, 1);
         const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
         const daysInMonth = lastDayOfMonth.getDate();
-        const startDay = firstDayOfMonth.getDay();
+        let startDay = firstDayOfMonth.getDay();
+        startDay = startDay === 0 ? 6 : startDay - 1;
         const totalWeeks = 6;
         let dayCounter = 1 - startDay;
-      
+    
         for (let i = 0; i < totalWeeks; i++) {
           const week = [];
           for (let j = 0; j < 7; j++) {
@@ -63,9 +64,10 @@ const DayGridTable = ({schedule, shiftName}) => {
           }
           grid.push(week);
         }
-      
+    
         return grid;
     };
+    
       
   
     const isToday = (day, month, year) => {
@@ -129,29 +131,27 @@ const DayGridTable = ({schedule, shiftName}) => {
                 {dayGrid.map((week, index) => (
                 <div key={index} className={styles.dayGridWeek}>
                     {week.map((day, index) => (
-                    <div
-                        key={index}
-                        className={`${styles.dayGridCell} ${
-                            index === 0 ? styles.dayGridSun : index === 6 ? styles.dayGridSat : ''
-                          } ${isToday(day, displayedMonth, displayedYear) ? styles.dayGridToday : ''}`}
-                        >
-                        {day}
-                        {events.map((event, index) => {
-                        const eventDate = event.date;
-                        if (
-                            eventDate.getFullYear() === displayedYear &&
-                            eventDate.getMonth() === displayedMonth &&
-                            eventDate.getDate() === day
-                        ) {
-                            return (
-                            <div key={index} className={styles.event}>
-                                {event.description}
-                            </div>
-                            );
-                        }
-                        return null;
-                        })}
-                    </div>
+                        <div
+                            key={index}
+                            className={`${styles.dayGridCell} ${isToday(day, displayedMonth, displayedYear) ? styles.dayGridToday : ''}`}
+                            >
+                            {day}
+                            {events.map((event, index) => {
+                            const eventDate = event.date;
+                            if (
+                                eventDate.getFullYear() === displayedYear &&
+                                eventDate.getMonth() === displayedMonth &&
+                                eventDate.getDate() === day
+                            ) {
+                                return (
+                                <div key={index} className={styles.event}>
+                                    {event.description}
+                                </div>
+                                );
+                            }
+                            return null;
+                            })}
+                        </div>
                     ))}
                 </div>
                 ))}
