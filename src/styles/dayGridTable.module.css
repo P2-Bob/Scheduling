@@ -157,4 +157,56 @@
         margin-bottom: 1rem;
         padding-left: 0.5rem;  /* Reduce padding */
     }
-  }
+}
+
+@media (max-width: 769px) {
+    .dayGridBody {
+        display: grid;
+        grid-template-columns: none;
+        gap: 1rem;
+    }
+    
+    .dayGridCellWeek {
+        border-radius: 0.5rem;
+    }
+
+    .dayGridHeader {
+        display: none;
+    }
+
+    .monthYearHeader {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 1rem;
+        font-size: 3.5vw;  /* Reduce font size */
+        margin-bottom: 1rem;
+        padding-left: 0.5rem;  /* Reduce padding */
+    }
+
+    .arrow {
+
+        font-size: 7vw;  /* Change this as per your requirement */
+        padding: 1vw;  /* Change this as per your requirement */
+        margin: 0 2vw;  /* Change this as per your requirement */
+    }
+    
+    .todayButton {
+        font-size: 3vw;  /* Change this as per your requirement */
+        padding: 1.5vw 2vw;  /* Change this as per your requirement */
+        margin: 0 2vw;  /* Change this as per your requirement */
+    }
+}
+
+@media (max-width: 575px) {
+    .arrow {
+        font-size: 2.5rem;  /* Change this as per your requirement */
+        padding: 0.5rem;  /* Change this as per your requirement */
+        margin: 0 0.5rem;  /* Change this as per your requirement */
+    }
+    
+    .todayButton {
+        font-size: 1rem;  /* Change this as per your requirement */
+        padding: 0.5rem 1rem;  /* Change this as per your requirement */
+        margin: 0 0.5rem;  /* Change this as per your requirement */
+    }
+}

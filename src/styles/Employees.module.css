@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding-top: 2rem;
+    padding-top: 12vh;
     background-color: #f0f0f0;
 }
 
@@ -24,7 +24,7 @@
     width: 90%;
     height: 80%;
     background-color: #f0f0f0;
-    padding: 1rem;
+    padding: 1rem 0;
 }
 
 .employeeCard {
@@ -52,6 +52,7 @@
 
 .employeeCard h2 {
     margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 .employeeCard p {
@@ -205,6 +206,7 @@
     padding: 1rem;
     border-radius: 12px;
     align-items: center;
+    width: 90%;
 }
 
 .createUser h2 {
@@ -281,4 +283,34 @@
 
 .createUserButtonContainer button {
     font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .main h1 {
+        font-size: min(6vw, 30px);
+        margin-bottom: 1vw;
+    }
+
+    .main p {
+        font-size: min(3.5vw, 20px);
+    }
+}
+
+@media (max-width: 865px) {
+    .createUserForm {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 70%;
+    }
+
+    .createUserInputWrapper {
+        margin: 0.5rem 0;
+        width: 45%;
+    }
+}
+
+@media (max-width: 573px) {
+    .createUserInputWrapper {
+        width: 100%;
+    }
 }

@@ -64,7 +64,7 @@ export default function Home({ result, userSchedule, shiftName }) {
 			</Head>
 			<Navbar user={result[0]} />
 			<div className={styles.main}>
-			<h1>Your Upcoming Shifts</h1>
+				<h1>Your Upcoming Shifts</h1>
 				{!useMediaQuery(768) ?
 					(
 						<div className={styles.calendar}>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '@/styles/dayGridTable.module.css';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
+import { useMediaQuery } from '../../../lib/mediaQuery';
 
 const WeekGridTable = ({schedule, shiftName, users}) => {
     const currentDate = new Date();
@@ -151,7 +152,7 @@ const WeekGridTable = ({schedule, shiftName, users}) => {
                                     index === 5 ? styles.dayGridSat : index === 6 ? styles.dayGridSun : ''
                                 } ${isToday(date) ? styles.dayGridToday : ''}`}                                
                             >
-                                {date.getDate()}
+                                {useMediaQuery(768) ? daysOfWeek[index] : ("")} {date.getDate()}
                                 {events.map((event, index) => {
                                     if (
                                         event.date.getFullYear() === date.getFullYear() &&
@@ -167,6 +168,7 @@ const WeekGridTable = ({schedule, shiftName, users}) => {
                                         );
                                         if (event.over18 === true) {
                                             return (
+                                                
                                                 <div key={index} className={`${styles.event} ${styles.over18}`}>
                                                     {formattedDescription}
                                                 </div>

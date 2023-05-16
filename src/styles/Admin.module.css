@@ -52,3 +52,23 @@
     cursor: pointer;
     background-color: #52a3f3;
 }
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .buttonContainer {
+        width: 100%;
+    }
+
+    .main h1 {
+        font-size: min(6vw, 30px);
+        margin-bottom: 1vw;
+    }
+
+    .main p {
+        font-size: min(4vw, 20px);
+    }
+}
