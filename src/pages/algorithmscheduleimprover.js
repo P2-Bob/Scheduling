@@ -284,42 +284,45 @@ const daysInARow = (schedule, employees) => {
 };
 
 const lastWorkedRow = (schedule, youthEmployees) => {
-	let employeesWithoutConsecutiveDaysOff = [];
+    let employeesWithoutConsecutiveDaysOff = [];
   
-	for (const employeeObj of youthEmployees) {
-	  let offInARowCounter = 0;
+    for (const employeeObj of youthEmployees) {
+        let offInARowCounter = 0;
+        let maxOffInARowCounter = 0;
   
-	  for (const day in schedule) {
-		let isOnShift = false;
-		for (const shift in schedule[day]) {
-		  if (schedule[day][shift].includes(employeeObj.username)) {
-			isOnShift = true;
-			offInARowCounter = 0;
-			break;
-		  }
-		}
+        for (const day in schedule) {
+            let isOnShift = false;
+            for (const shift in schedule[day]) {
+                if (schedule[day][shift].includes(employeeObj.username)) {
+                    isOnShift = true;
+                    offInARowCounter = 0;
+                    break;
+                }
+            }
   
-		  if (!isOnShift) {
-			  offInARowCounter++;
-		  }
-	  }
+            if (!isOnShift) {
+                offInARowCounter++;
+                if (offInARowCounter > maxOffInARowCounter) {
+                    maxOffInARowCounter = offInARowCounter;
+                }
+            }
+        }
   
-	  employeesWithoutConsecutiveDaysOff.push({
-		employee: employeeObj.username,
-		offInARow: offInARowCounter,
-	  });
-	}
-  
-	for (const employee of employeesWithoutConsecutiveDaysOff) {
-	  if (employee.offInARow < 2) {
-		//console.log(employeesWithoutConsecutiveDaysOff);
-		return false;
-	  }
-	}
-  
-	//console.log(employeesWithoutConsecutiveDaysOff);
-	return true;
-  };
+        employeesWithoutConsecutiveDaysOff.push({
+            employee: employeeObj.username,
+            maxOffInARow: maxOffInARowCounter,
+        });
+    } 
+
+    for (const employee of employeesWithoutConsecutiveDaysOff) {
+        if (employee.maxOffInARow < 2) {
+            return false;
+        }
+    }
+	
+    return true;
+};
+
   
   
 
