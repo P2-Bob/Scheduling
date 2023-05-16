@@ -119,7 +119,7 @@ export default function Schedule({ users, shiftName }) {
         return (
             <>  
                 <Head>
-                    <title>My Website - Manage Employees</title>
+                    <title>Market Scheduling - Manage Employees</title>
                     <meta name="description" content="Admin page" />
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <link rel="icon" href="/favicon.ico" />

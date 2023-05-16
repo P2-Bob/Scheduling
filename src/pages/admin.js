@@ -103,7 +103,7 @@ export default function Admin({ result }) {
         return (
             <>
                 <Head>
-                    <title>My Website - Admin</title>
+                    <title>Market Scheduling - Admin</title>
                     <meta name="description" content="Admin page" />
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <link rel="icon" href="/favicon.ico" />
