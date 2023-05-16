@@ -1,4 +1,5 @@
 
+
 const mysql = require('mysql2');
 const _ = require('lodash');
 
@@ -80,6 +81,17 @@ const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, 
                     pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
                 }
             }
+			if (day === 'Saturday' || day === 'Sunday') {
+				if (shift === '6-14' || shift === '14-22') {
+					if (amountOfWorkers === 2) {
+						const found1 = worker.find(element => element.username === pickEmployee[0]);
+						const found2 = worker.find(element => element.username === pickEmployee[1]);
+						if (!found1 || !found2) {
+							pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
+						}
+					}
+				}
+			}
         }
 
 
@@ -327,11 +339,16 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 				const hasYouthEmployee = youthEmployees.some((e) => e.username === employee);
 				if (hasEmployee) {
 					counterHasEmployee = 0;
+					if (day === 'Saturday' && shift === '6-14') {
+					} else if (day === 'Saturday' && shift === '14-22') {
+					} else if (day === 'Sunday' && shift === '6-14') {
+					} else if (day === 'Sunday' && shift === '14-22') {
+					}
 					if ((day === 'Saturday' || day === 'Sunday') && shift === '6-14' || shift === '14-22') {
 						counterHasEmployee++;
 						//console.log(counterHasEmployee);
-						console.log(value)
-						if (counterHasEmployee < 3) {
+						//console.log(value)
+						if (counterHasEmployee === 0) {
 							value -= 10000;
 							counterHasEmployee = 0;
 						}
@@ -474,6 +491,20 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 								pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
 							}
 						}
+						if (day === 'Saturday' || day === 'Sunday') {
+							if (shift === '6-14' || shift === '14-22') {
+								const found1 = employees.find(element => element.username === tempSwap[0]);
+								const found2 = employees.find(element => element.username === tempSwap[1]);
+								const found3 = employees.find(element => element.username === tempSwap[2]);
+								if (!found1 && !found2 || !found2 && !found3 || !found1 && !found3) {
+									const found4 = employees.find(element => element.username === tempSwap[randomEmployeePicker]);
+									if (found4) {
+										pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+									}
+								}
+								
+							}
+						}
 					}
 
 					if (youthEmployees.includes(pickEmployee)) {
@@ -509,20 +540,19 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 				tempSwap[randomEmployeePicker] = pickEmployee;
 				swappedSchedule[day][shift] = tempSwap;
 
-				//console.log("her", pickEmployee);
-				//console.log("best grimme mødre1", bestUnavailableEmployees[day]);
 				bestUnavailableEmployees[day] = bestUnavailableEmployees[day].concat(pickEmployee);
-				//console.log("best grimme mødre2", bestUnavailableEmployees[day]);
+
 				break;
-				//console.log("best grimme mødre2", bestUnavailableEmployees[day]);
 			}
 		}
-
 	}
 	//console.log(bestUnavailableEmployees);
 	return swappedSchedule;
 } 
 
+const supervisorCheck = (schedule, employees) => {
+
+};
 
 const generateSchedule = async (employees, youthEmployees, preference) => {
 
@@ -572,6 +602,10 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 		//const overworkedEmployeeCheck = OverworkedEmployeeCheck(swappedSchedule, day, pickEmployee, amountOfWorkersCounter, shift, employees);
 
 		swapTries++;
+		if (swapTries > 1000000) {
+			swappedSchedule = _.cloneDeep(bestSchedule);
+			break;
+		}
 
 	}
 	console.log("Tries:", swapTries);
