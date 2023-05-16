@@ -225,6 +225,7 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 				if (tempSchedule[day]['6-14'].includes(employeeName)) 
 				{
 					let previousDay;
+					
 					switch (day) {
 						case 'Monday':
 							previousDay = 'Sunday';
@@ -282,52 +283,45 @@ const daysInARow = (schedule, employees) => {
 	return true;
 };
 
-/* const lastWorkedRow = (schedule, youthEmployees) => {
+const lastWorkedRow = (schedule, youthEmployees) => {
 	let employeesWithoutConsecutiveDaysOff = [];
-	
-	let offInARowCounter = 0;
-	for (const day in schedule) {
+  
+	for (const employeeObj of youthEmployees) {
+	  let offInARowCounter = 0;
+  
+	  for (const day in schedule) {
+		let isOnShift = false;
 		for (const shift in schedule[day]) {
-			for (const employeeObj of youthEmployees) {
-				if (!(schedule[day].includes(employeeObj.username))) {
-
-					let previousDay;
-					console.log("hallo din bums")
-					switch (day) {
-						case 'Monday':
-							previousDay = 'Sunday';
-							break;
-						case 'Tuesday':
-							previousDay = 'Monday';
-							break;
-						case 'Wednesday':
-							previousDay = 'Tuesday';
-							break;
-						case 'Thursday':
-							previousDay = 'Wednesday';
-							break;
-						case 'Friday':
-							previousDay = 'Thursday';
-							break;
-						case 'Saturday':
-							previousDay = 'Friday';
-							break;
-						case 'Sunday':
-							previousDay = 'Saturday';
-							break;
-					}
-					if (!(schedule[previousDay].includes(employeeObj.username))) {
-						offInARowCounter++;
-						if (offInARowCounter === 1) {
-							//console.log(offInARowCounter)
-						}
-					}
-				}
-			}
+		  if (schedule[day][shift].includes(employeeObj.username)) {
+			isOnShift = true;
 			offInARowCounter = 0;
+			break;
+		  }
 		}
+  
+		  if (!isOnShift) {
+			  offInARowCounter++;
+		  }
+	  }
+  
+	  employeesWithoutConsecutiveDaysOff.push({
+		employee: employeeObj.username,
+		offInARow: offInARowCounter,
+	  });
 	}
-}; */
+  
+	for (const employee of employeesWithoutConsecutiveDaysOff) {
+	  if (employee.offInARow < 2) {
+		//console.log(employeesWithoutConsecutiveDaysOff);
+		return false;
+	  }
+	}
+  
+	//console.log(employeesWithoutConsecutiveDaysOff);
+	return true;
+  };
+  
+  
 
 const fitness = (schedule, employees, youthEmployees, preference) => {
 	let value = 0;
@@ -404,6 +398,11 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 	if (daysInARow(schedule, employees) === false) {
 		value -= 10000;
 	}
+	//console.log(lastWorkedRow(schedule, youthEmployees));
+	if (lastWorkedRow(schedule, youthEmployees) === false) {
+		value -= 10000;
+	}
+
 
 	return value;
 };
@@ -549,10 +548,6 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 	//console.log(bestUnavailableEmployees);
 	return swappedSchedule;
 } 
-
-const supervisorCheck = (schedule, employees) => {
-
-};
 
 const generateSchedule = async (employees, youthEmployees, preference) => {
 
