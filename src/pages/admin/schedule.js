@@ -21,12 +21,18 @@ export async function getServerSideProps(ctx) {
 		const shiftName = await executeQuery({
 			query: 'SELECT * FROM shifts',
 			value: []
-		})
+        })
+        
+        const schedule = await executeQuery({
+            query: 'SELECT * FROM schedule',
+            value: []
+        })
 
         return {
             props: {
                 users: users,
                 shiftName: shiftName,
+                currentSchedule: schedule,
             },
         }
     } else {
@@ -34,16 +40,18 @@ export async function getServerSideProps(ctx) {
             props: {
                 users: null,
                 shiftName: null,
+                currentSchedule: null,
           },
         }
     }
 }
 
-export default function Schedule({ users, shiftName }) {
+export default function Schedule({ users, shiftName, currentSchedule }) {
 
     let schedule = [];
-	const [userSchedule, setUserSchedule] = useState([]);
-    //Database: username, shift_id: shift, work_day: day
+    const [userSchedule, setUserSchedule] = useState([]);
+    const [date, setDate] = useState(Date());
+
 	const retriveSchedule = async () => {
 		const schedulefetch = await fetch('/api/updateSchedule', {
 			method: 'GET',
@@ -53,22 +61,13 @@ export default function Schedule({ users, shiftName }) {
 		if (!schedulefetch.ok) {alert("Error fetching schedule data")};
 
 		schedule = await schedulefetch.json();
-		console.log(schedule.schedule);
-        let newUserSchedule = [];
-        Object.keys(schedule.schedule).forEach((day) => {
-            const dayShifts = schedule.schedule[day];
-            Object.keys(schedule.schedule[day]).forEach((shift) => {
-                const users = dayShifts[shift];
-                users.forEach((user) => {
-                    newUserSchedule.push({ username: user, work_day: day, shift_id: shift});
-                });
-            });
-        });
-        console.log(newUserSchedule);
         
-        setUserSchedule(newUserSchedule);
+        setUserSchedule(schedule.userSchedule);
+        setDate(new Date(schedule.date));
 
-        console.log(userSchedule);
+        /* console.log("Date", schedule.date);
+        const currentDate = new Date(schedule.date);
+        console.log(currentDate) */
 
     };
     
@@ -77,6 +76,7 @@ export default function Schedule({ users, shiftName }) {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
+        setUserSchedule([]);
     }
 
     const { data: session } = useSession();
@@ -115,11 +115,18 @@ export default function Schedule({ users, shiftName }) {
         return <>Loading app...</>;
     }
 
+    useEffect(() => {
+        if (currentSchedule.length > 0) {
+            setUserSchedule(currentSchedule);
+            setDate(new Date(currentSchedule[0].date));
+        }
+    }, []);
+
     if (!unAuthorized) {
         return (
             <>  
                 <Head>
-                    <title>Market Scheduling - Manage Employees</title>
+                    <title>Scheduling - Manage Employees</title>
                     <meta name="description" content="Admin page" />
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <link rel="icon" href="/favicon.ico" />
@@ -130,11 +137,13 @@ export default function Schedule({ users, shiftName }) {
                         <h1>Schedule Section</h1>
                         <p>Here you can manage the schedule for the employees</p>
                     </div>
-                    <button onClick={retriveSchedule}>Click me</button>
-                    <button onClick={truncateTable}>Truncate din mor</button>
-                    {/* <div className={styles.calendar}> 
-                        <WeekGridTable schedule={userSchedule} shiftName={shiftName} users={users}/>
-                    </div> */}
+                    <div className={styles.buttonContainer}>
+                        <button className={styles.createButton} onClick={retriveSchedule} disabled={userSchedule.length > 0}>Create Schedule</button>
+                        <button className={styles.deleteButton} onClick={truncateTable}>Delete Schedule</button>
+                    </div>
+                    <div className={styles.calendar}>
+                        {userSchedule.length > 0 ? (<WeekGridTable schedule={userSchedule} shiftName={shiftName} users={users} startDate={date}/>) : ""}
+                    </div>
                 </div>
             </>
         )

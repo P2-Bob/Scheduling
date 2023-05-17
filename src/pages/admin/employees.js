@@ -22,10 +22,16 @@ export async function getServerSideProps(ctx) {
             value: []
         })
 
+        const schedule = await executeQuery({
+            query: 'SELECT * FROM schedule',
+            value: []
+        })
+
         return {
             props: {
                 users: users,
                 departments: departments,
+                schedule: schedule,
             },
         }
     } else {
@@ -33,12 +39,13 @@ export async function getServerSideProps(ctx) {
             props: {
                 users: null,
                 departments: null,
+                schedule: null,
           },
         }
     }
 }
 
-export default function employees({ users, departments }) {
+export default function employees({ users, departments, schedule }) {
 
     const [selectedRole, setSelectedRole] = useState(
         users.reduce((acc, user) => {
@@ -262,8 +269,35 @@ export default function employees({ users, departments }) {
         alert('Employee created successfully!');
 
     }
+    let employeesWorkTime = [];
+    for (const employee in employees) {
+        let workTime = 0;
+        for (const shift in schedule) {
+            if (schedule[shift].username === employees[employee].username) {
+                if (schedule[shift].shift_id === 1 || schedule[shift].shift_id === 2) {
+                    workTime += 8;
+                } else {
+                    workTime += 5;
+                }
+            }
+        }
 
+        employeesWorkTime.push({username: employees[employee].username, workTime: workTime});
+    }
 
+    const updatedEmployees = employees.map((employee) => {
+        const workTimeEntry = employeesWorkTime.find((entry) => entry.username === employee.username);
+
+        if (workTimeEntry) {
+            return { ...employee, workTime: workTimeEntry.workTime };
+        } else {
+            return { ...employee, workTime: 0 };
+        }
+    });
+
+    useEffect(() => {
+        setEmployees(updatedEmployees);
+    }, [schedule]);
 
     const { data: session } = useSession();
     let unAuthorized = true;
@@ -445,6 +479,7 @@ export default function employees({ users, departments }) {
                                         <p><strong>Username:</strong> {employee.username}</p>
                                         <p><strong>Age:</strong> {employee.age}</p>
                                         <p><strong>Department:</strong> {departments.find(department => department.department_id === employee.department_id)?.department_name}</p>
+                                        <p><strong>Hours Worked:</strong> {employee.workTime}</p>
                                         <div className={styles.employeeButtons}>
                                             <button className={styles.editButton} onClick={() => editingEmployeeHandler(employee.username)}>
                                                 Edit

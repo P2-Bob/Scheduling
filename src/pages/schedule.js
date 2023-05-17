@@ -58,7 +58,7 @@ export default function Home({ userSchedule, shiftName, users }) {
   return (
     <>
       <Head>
-        <title>Market Scheduling - schedule</title>
+        <title>Scheduling - schedule</title>
         <meta name="description" content="Schedule page" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -67,7 +67,7 @@ export default function Home({ userSchedule, shiftName, users }) {
       <div className={styles.main}>
         <h1>Your Upcoming Shifts</h1>
         <div className={styles.calendar}>
-          <WeekGridTable schedule={userSchedule} shiftName={shiftName} users={users} />
+          <WeekGridTable schedule={userSchedule} shiftName={shiftName} users={users} startDate={new Date()} />
         </div>
       </div> 
     </>

@@ -187,30 +187,15 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 				const employeeName = employeeObj.username;				
 				if (tempSchedule[day]['6-14'].includes(employeeName)) 
 				{
-					let previousDay;
-					switch (day) {
-						case 'Monday':
-							previousDay = 'Sunday';
-							break;
-						case 'Tuesday':
-							previousDay = 'Monday';
-							break;
-						case 'Wednesday':
-							previousDay = 'Tuesday';
-							break;
-						case 'Thursday':
-							previousDay = 'Wednesday';
-							break;
-						case 'Friday':
-							previousDay = 'Thursday';
-							break;
-						case 'Saturday':
-							previousDay = 'Friday';
-							break;
-						case 'Sunday':
-							previousDay = 'Saturday';
-							break;
+					const dayIndex = days.indexOf(day);
+					let previousDayIndex;
+					if (dayIndex === 0) {
+						previousDayIndex = 6;
+					} else {
+						previousDayIndex = dayIndex - 1;
 					}
+					const previousDay = days[previousDayIndex];
+
 					if (tempSchedule[previousDay]['14-22'].includes(employeeName) || tempSchedule[previousDay]['17-22'].includes(employeeName)) {
 						//console.log(employeeName + ' is overworked');
 						return false;
@@ -224,31 +209,15 @@ const getOverworkedEmployeeCheck = (schedule, employees, youthEmployees) => {
 				
 				if (tempSchedule[day]['6-14'].includes(employeeName)) 
 				{
-					let previousDay;
-					
-					switch (day) {
-						case 'Monday':
-							previousDay = 'Sunday';
-							break;
-						case 'Tuesday':
-							previousDay = 'Monday';
-							break;
-						case 'Wednesday':
-							previousDay = 'Tuesday';
-							break;
-						case 'Thursday':
-							previousDay = 'Wednesday';
-							break;
-						case 'Friday':
-							previousDay = 'Thursday';
-							break;
-						case 'Saturday':
-							previousDay = 'Friday';
-							break;
-						case 'Sunday':
-							previousDay = 'Saturday';
-							break;
+					const dayIndex = days.indexOf(day);
+					let previousDayIndex;
+					if (dayIndex === 0) {
+						previousDayIndex = 6;
+					} else {
+						previousDayIndex = dayIndex - 1;
 					}
+					const previousDay = days[previousDayIndex];
+					
 					if (tempSchedule[previousDay]['14-22'].includes(employeeName) || tempSchedule[previousDay]['17-22'].includes(employeeName)) {
 						//console.log(employeeName + ' is overworked');
 						return false;
@@ -401,7 +370,7 @@ const fitness = (schedule, employees, youthEmployees, preference) => {
 	if (daysInARow(schedule, employees) === false) {
 		value -= 10000;
 	}
-	//console.log(lastWorkedRow(schedule, youthEmployees));
+
 	if (lastWorkedRow(schedule, youthEmployees) === false) {
 		value -= 10000;
 	}
@@ -601,7 +570,7 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 
 		swapTries++;
 		if (swapTries > 1000000) {
-			swappedSchedule = _.cloneDeep(bestSchedule);
+			swappedSchedule = bestSchedule;
 			break;
 		}
 

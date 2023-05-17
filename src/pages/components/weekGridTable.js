@@ -4,11 +4,7 @@ import styles from '@/styles/dayGridTable.module.css';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import { useMediaQuery } from '../../../lib/mediaQuery';
 
-const WeekGridTable = ({schedule, shiftName, users}) => {
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    const today = currentDate.getDate();
+const WeekGridTable = ({schedule, shiftName, users, startDate}) => {
 
     const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     
@@ -30,14 +26,9 @@ const WeekGridTable = ({schedule, shiftName, users}) => {
     
 
     // State for the displayed week
-    const [displayedWeek, setDisplayedWeek] = useState(calculateWeek(currentDate));
-
-    console.log(schedule)
-
-
+    const [displayedWeek, setDisplayedWeek] = useState(calculateWeek(startDate));
 
     let events = [];
-    // Hardcoded list of events
     schedule.forEach((shift) => {
         const shift1 = shiftName.filter((shifts) => shifts.shift_id === shift.shift_id);
         const user = users.find((user) => user.username === shift.username);
@@ -62,17 +53,6 @@ const WeekGridTable = ({schedule, shiftName, users}) => {
 
     // Sort events by shift_id
     events.sort((a, b) => a.shift_id - b.shift_id);
-
-    console.log(events)
-
- 
-    // Find events for a specific day
-    const eventsForDay = (day, month, year) => {
-        if (!day) return [];
-        return events.filter(
-            (event) => event.date.getDate() === day && event.date.getMonth() === month && event.date.getFullYear() === year
-        );
-    };
 
     // Add useEffect to update the dayGrid when displayedWeek changes
     useEffect(() => {

@@ -20,7 +20,7 @@ const Navbar = ({ user }) => {
             <div className={styles.navBar}>
                 <div className={styles.navBarLogo}>
                     <Link href="/">
-                        Market Scheduling 
+                        Scheduling 
                     </Link>
                 </div>
                 <div className={`${styles.navBarLinks} ${styles.hideOnTablet} `}>
@@ -62,7 +62,7 @@ const Navbar = ({ user }) => {
             <div className={styles.navBar}>
                 <div className={styles.navBarLogo}>
                     <Link href="/">
-                    Market Scheduling
+                    Scheduling
                     </Link>
                 </div>
                 <div className={styles.navBarLinks}>
