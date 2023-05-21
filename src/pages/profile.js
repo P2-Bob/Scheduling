@@ -6,6 +6,7 @@ import { executeQuery } from '../../lib/db'
 import { getSession } from 'next-auth/react'
 import { MdWorkHistory, MdWorkOff, MdWork } from 'react-icons/md'
 import { useState } from 'react'
+import { useMediaQuery } from '../../lib/mediaQuery'
 
 export async function getServerSideProps(ctx) {
 
@@ -90,6 +91,27 @@ export default function Profile({ result, departments, mySchedule, myPreferences
         })
     }
 
+    const handlePreferenceSubmit = async (e) => {
+        e.preventDefault();
+        console.log(userPreferences);
+        setEditingPreference(!editingPreference);
+
+        const result = await fetch('/api/updatePreference', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                userPreferences
+            })
+        });
+
+        if (!result.ok) {
+            alert('Something went wrong!');
+            return;
+        }
+
+        alert('Preferences updated successfully!');
+    }
+
     return (
         <>
             <Head>
@@ -113,48 +135,75 @@ export default function Profile({ result, departments, mySchedule, myPreferences
                     <div className={styles.preferences}>
                         <h1>Preferences</h1>
                         <p>Below you can see your <span style={{ color: "green" }}>prefered</span> and <span style={{ color: "red"}}>not prefered</span> work days</p>
-                        <div className={styles.preferenceTable}>
-                            {!editingPreference ? (
-                                <table>
-                                    <thead>
-                                        <tr className={styles.weekDays}>
-                                            {days.map((day) => (
-                                                <th className={styles.weekDays} key={day}>{day[0].toUpperCase() + day[1] + day[2]}</th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {myPreferences.map((preference) => (
-                                            <tr key={preference.case_id}>
+                        {!editingPreference ? (
+                            useMediaQuery(768) ? (
+                                <div className={styles.preferenceContainerM}>
+                                    <div className={styles.preferenceList}>
+                                        {userPreferences.map((preference) => (
+                                            days.map((day) => (
+                                                <div className={`
+                                                ${styles.preferenceItem} 
+                                                ${preference[day] === 0 ? styles.dontCareM :
+                                                    preference[day] === 1 ? styles.workM :
+                                                    styles.dontWorkM
+                                                }
+                                                `} key={day}>
+                                                    <div className={styles.day}>{day[0].toUpperCase() + day[1] + day[2]}</div>
+                                                    <div className={styles.icon}>
+                                                        {preference[day] === 0 ? <MdWork/> :
+                                                        preference[day] === 1 ? <MdWorkHistory/> :
+                                                        <MdWorkOff/>}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ))}
+                                    </div>
+                                    <button className={styles.editPreferences} onClick={() => setEditingPreference(!editingPreference)}>Edit Preferences</button>
+                                </div>
+                                
+                            ) : (
+                                <div className={styles.preferenceTable}>
+                                    <table>
+                                        <thead>
+                                            <tr className={styles.weekDays}>
                                                 {days.map((day) => (
-                                                    <td key={day} className={
-                                                        preference[day] === 0 ? styles.dontCare :
-                                                        preference[day] === 1 ? styles.work :
-                                                        styles.dontWork
-                                                    }>{preference[day] === 1 ? <MdWorkHistory/> : preference[day] === 2 ? <MdWorkOff/> : <MdWork/>}</td>
+                                                    <th className={styles.weekDays} key={day}>{day[0].toUpperCase() + day[1] + day[2]}</th>
                                                 ))}
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) : (
-                                <table>
-                                    <thead>
-                                        <tr className={styles.weekDays}>
-                                            {days.map((day) => (
-                                                <th className={styles.weekDays} key={day}>{day[0].toUpperCase() + day[1] + day[2]}</th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {userPreferences.map((preference) => (
-                                            <tr key={preference.case_id}>
-                                                {days.map((day) => (
-                                                    <td key={day}>
-                                                        <select 
-                                                            className={`${styles.preferenceSelect} ${preference[day] === 0 ? styles.dontCare :
+                                        </thead>
+                                        <tbody>
+                                            {userPreferences.map((preference) => (
+                                                <tr key={preference.case_id}>
+                                                    {days.map((day) => (
+                                                        <td key={day} className={
+                                                            preference[day] === 0 ? styles.dontCare :
                                                             preference[day] === 1 ? styles.work :
-                                                            styles.dontWork}`}
+                                                            styles.dontWork
+                                                        }>{preference[day] === 1 ? <MdWorkHistory/> : preference[day] === 2 ? <MdWorkOff/> : <MdWork/>}</td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <button className={styles.editPreferences} onClick={() => setEditingPreference(!editingPreference)}>Edit Preferences</button>
+                                </div>
+                            )
+                        ) : (
+                            useMediaQuery(768) ? (
+                                <div className={styles.preferenceContainerM}>
+                                    <form>
+                                        <div className={styles.preferenceList}>
+                                            {userPreferences.map((preference) => (
+                                                days.map((day) => (
+                                                    <div className={styles.preferenceItemS} key={day}>
+                                                        <div className={styles.day}>{day[0].toUpperCase() + day[1] + day[2]}</div>
+                                                        <select 
+                                                            className={`
+                                                                ${styles.preferenceSelect} 
+                                                                ${preference[day] === 0 ? styles.dontCareM :
+                                                                preference[day] === 1 ? styles.workM :
+                                                                styles.dontWorkM
+                                                            }`}
                                                             value={preference[day]} 
                                                             onChange={(e) => handlePreferenceChange(preference.case_id, day, e.target.value)}
                                                         >
@@ -162,84 +211,57 @@ export default function Profile({ result, departments, mySchedule, myPreferences
                                                             <option value={1}>Work</option>
                                                             <option value={2}>Don't Work</option>
                                                         </select>
-                                                    </td>
+                                                    </div>
+                                                ))
+                                            ))}
+                                        </div>
+                                        <div className={styles.preferenceButtons}>
+                                            <button className={styles.editPreferences} type="button" onClick={() => setEditingPreference(!editingPreference)}>Back</button>
+                                            <button className={styles.savePreferences} type="submit" onClick={handlePreferenceSubmit}>Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            ) : (
+                                <div className={styles.preferenceTable}>
+                                    <form>
+                                        <table>
+                                            <thead>
+                                                <tr className={styles.weekDays}>
+                                                    {days.map((day) => (
+                                                        <th className={styles.weekDays} key={day}>{day[0].toUpperCase() + day[1] + day[2]}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {userPreferences.map((preference) => (
+                                                    <tr key={preference.case_id}>
+                                                        {days.map((day) => (
+                                                            <td key={day}>
+                                                                <select 
+                                                                    className={`${styles.preferenceSelect} ${preference[day] === 0 ? styles.dontCare :
+                                                                    preference[day] === 1 ? styles.work :
+                                                                    styles.dontWork}`}
+                                                                    value={preference[day]} 
+                                                                    onChange={(e) => handlePreferenceChange(preference.case_id, day, e.target.value)}
+                                                                >
+                                                                    <option value={0}>Don't Care</option>
+                                                                    <option value={1}>Work</option>
+                                                                    <option value={2}>Don't Work</option>
+                                                                </select>
+                                                            </td>
+                                                        ))}
+                                                    </tr>
                                                 ))}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
-
-                        </div>
-                        <button className={styles.editPreferences} onClick={() => setEditingPreference(!editingPreference)}>Edit Preferences</button>
-                                        
-                    {/* <table>
-                        <thead>
-                            <tr>
-                                <th>Monday</th>
-                                <th>Tuesday</th>
-                                <th>Wednesday</th>
-                                <th>Thursday</th>
-                                <th>Friday</th>
-                                <th>Saturday</th>
-                                <th>Sunday</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select id="m">
-                                        <option value="work">Want to work</option>
-                                        <option value="notwork">Don't want to work</option>
-                                        <option value="dontcare">Don't care</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select id="t">
-                                        <option value="work">Want to work</option>
-                                        <option value="notwork">Don't want to work</option>
-                                        <option value="dontcare">Don't care</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select id="w">
-                                        <option value="work">Want to work</option>
-                                        <option value="notwork">Don't want to work</option>
-                                        <option value="dontcare">Don't care</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select id="t">
-                                        <option value="work">Want to work</option>
-                                        <option value="notwork">Don't want to work</option>
-                                        <option value="dontcare">Don't care</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select id="f">
-                                        <option value="work">Want to work</option>
-                                        <option value="notwork">Don't want to work</option>
-                                        <option value="dontcare">Don't care</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select id="s">
-                                        <option value="work">Want to work</option>
-                                        <option value="notwork">Don't want to work</option>
-                                        <option value="dontcare">Don't care</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select id="s">
-                                        <option value="work">Want to work</option>
-                                        <option value="notwork">Don't want to work</option>
-                                        <option value="dontcare">Don't care</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table> */}
-                        
+                                            </tbody>
+                                        </table>
+                                        <div className={styles.preferenceButtons}>
+                                            <button className={styles.editPreferences} type="button" onClick={() => setEditingPreference(!editingPreference)}>Back</button>
+                                            <button className={styles.savePreferences} type="submit" onClick={handlePreferenceSubmit}>Save</button>
+                                        </div>    
+                                    </form>                        
+                                </div>
+                            )
+                        )}
                     </div>
                 </div>
             </div>

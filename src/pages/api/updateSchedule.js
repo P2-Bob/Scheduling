@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { executeQuery } from "../../../lib/db";
 import generateSchedule from "../algorithmscheduleimprover";
 
-export default async (req, res) => {
+export default async function handler(req, res) {
     const session = await getServerSession(req, res);
 
     // check if user is an admin
