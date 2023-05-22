@@ -1,6 +1,6 @@
 import '@/styles/globals.css'
 import { SessionProvider } from "next-auth/react"
-import { ProtectedPages } from './components/protectedPages'
+import ProtectedPages from './components/protectedPages'
 
 
 export default function App({

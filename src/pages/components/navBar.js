@@ -65,7 +65,7 @@ const Navbar = ({ user }) => {
                     Scheduling
                     </Link>
                 </div>
-                <div className={styles.navBarLinks}>
+                <div className={`${styles.navBarLinks} ${styles.hideOnTablet}`}>
                     <Link href="/" className={styles.navBarLink}>
                         Front Page
                     </Link>
@@ -74,6 +74,26 @@ const Navbar = ({ user }) => {
                     </Link>
                 </div>
                 <Loginbtn initials={initials} name={user.name} hide={true} />
+                <div className={styles.menuBar} onClick={() => setMenuActive(!menuActive)}>
+                    <AiOutlineMenu />
+                </div>
+                <div className={`${menuActive ? styles.menuActive : ""} ${styles.menuList}`}>
+
+                    <Link href="/">
+                        Front Page
+                    </Link>
+                    <Link href="/schedule">
+                        Work Schedule
+                    </Link>
+                    <Link href="/admin">
+                        Admin
+                    </Link>
+                    <Link href="/profile">
+                        Profile
+                    </Link>
+                    <Loginbtn initials={initials} name={user.name} hide={false} menu={true} />
+                    <AiOutlineClose onClick={() => setMenuActive(!menuActive)} />
+                </div>
             </div>
         );
     }

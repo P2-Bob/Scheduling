@@ -31,6 +31,7 @@ const WeekGridTable = ({schedule, shiftName, users, startDate}) => {
     let events = [];
     schedule.forEach((shift) => {
         const shift1 = shiftName.filter((shifts) => shifts.shift_id === shift.shift_id);
+        console.log("shift1", shift1)
         const user = users.find((user) => user.username === shift.username);
         if (user.age < 18) {
             events.push(

@@ -10,7 +10,7 @@ import { useEffect } from 'react';
   export default OrderDetail;
  */
 
-export const ProtectedPages = ({ children }) => {
+const ProtectedPages = ({ children }) => {
   const router = useRouter();
   const { status: sessionStatus } = useSession();
   const authorized = sessionStatus === 'authenticated';
@@ -41,3 +41,5 @@ export const ProtectedPages = ({ children }) => {
   // otherwise, render nothing while the router redirects him to the login page
   return authorized ? <div>{children}</div> : <></>;
 };
+
+export default ProtectedPages;
