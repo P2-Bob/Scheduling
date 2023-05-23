@@ -47,7 +47,7 @@ export async function getServerSideProps(ctx) {
 	}
 }
 
-export default function Home({ userSchedule, shiftName, users }) {
+export default function Schedule({ userSchedule, shiftName, users }) {
 
 	const { data: session } = useSession();
 	let foundUser = null;
