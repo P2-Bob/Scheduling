@@ -53,6 +53,7 @@ export async function getServerSideProps(ctx) {
 }
 
 export default function Home({ result, userSchedule, shiftName }) {
+
 	
 	return (
 		<>
