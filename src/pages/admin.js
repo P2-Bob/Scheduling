@@ -21,7 +21,6 @@ export async function getServerSideProps(ctx) {
         })
 
         // Pass data to the page via props
-        console.log(result)
 
         return {
             props: {
@@ -52,7 +51,7 @@ export default function Admin({ result }) {
 
 		schedule = await schedulefetch.json();
 		console.log(schedule.schedule);
-
+        
 		for (const day in schedule.schedule){
 			console.log(day)
 			for (const shift in schedule.schedule[day]){
@@ -66,7 +65,6 @@ export default function Admin({ result }) {
 		console.log(userSchedule); 
 	};
 	
-
     const { data: session } = useSession();
     let unAuthorized = true;
     if (session) {
@@ -76,7 +74,6 @@ export default function Admin({ result }) {
             unAuthorized = false;
         }
     }
-
     const router = useRouter();
     const { status: sessionStatus } = useSession();
     const loading = sessionStatus === 'loading';
