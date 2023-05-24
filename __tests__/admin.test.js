@@ -25,28 +25,8 @@ jest.mock('next-auth/react', () => ({
 
 jest.mock('next/router', () => ({
     useRouter: jest.fn(() => ({
-/*       route: '/',
-      pathname: '',
-      query: '',
-      asPath: '',
-      push: jest.fn().mockResolvedValue(true),
-      replace: jest.fn(),
-      reload: jest.fn(),
-      back: jest.fn(),
-      prefetch: jest.fn(),
-      beforePopState: jest.fn(),
-      events: {
-        on: jest.fn(),
-        off: jest.fn(),
-        emit: jest.fn(),
-      },
-      isFallback: false,
-      isReady: true,
-      isPreview: false,
-      isLocaleDomain: false,
-      basePath: '', */
     })),
-  }));
+}));
 
 describe('Admin page', () => {
 
@@ -92,7 +72,6 @@ describe('Admin page', () => {
         render(
             <Admin {...mockProps} />
         );
-        
         expect(screen.getByTestId('navbar')).toBeInTheDocument();
     });
 
