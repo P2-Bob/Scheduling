@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, queryByRole, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Profile from '@/pages/profile';
 import { useMediaQuery } from '../lib/mediaQuery';
 import { useState as useStateMock } from 'react';
+import { act } from 'react-dom/test-utils';
 
 // Mock the useMediaQuery hook
 jest.mock('../lib/mediaQuery', () => ({
@@ -35,14 +36,22 @@ jest.mock('react', () => ({
     useState: jest.fn(),
 }));
 
+global.fetch = jest.fn(() =>
+    Promise.resolve({
+        json: () => Promise.resolve({ success: true }),
+    })
+);
+
 const setState = jest.fn()
 
 describe('Schedule', () => {
     beforeEach(() => {
-        useStateMock.mockImplementation(init => [init, setState]);
+        useStateMock.mockImplementation(init => [init, setState])
+            .mockImplementation(init => [init, setState]);
     });
-
-
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
     // Provide the props that getServerSideProps would normally supply
     const mockProps = {
         result: [{
@@ -129,7 +138,7 @@ describe('Schedule', () => {
     describe('Preferences display', () => {
         it('Displays preferences when editing false', () => {
             // Mock the usestate hook editingPreference
-            useStateMock.mockReturnValueOnce([false, jest.fn()])
+            useStateMock.mockReturnValueOnce([false, setState])
             
             // Mock the return value of useMediaQuery
             useMediaQuery.mockReturnValue(true);
@@ -152,7 +161,9 @@ describe('Schedule', () => {
 
         it('Displays preferences when editing true', () => {
             // Mock the usestate hook editingPreference
-            useStateMock.mockReturnValueOnce([true, jest.fn()])
+            useStateMock.mockReturnValueOnce([true, setState]);
+
+            console.log('Before rendering component:', useStateMock.mock.results); // Log the value before rendering
             
             // Mock the return value of useMediaQuery
             useMediaQuery.mockReturnValue(true);
@@ -161,8 +172,69 @@ describe('Schedule', () => {
                 <Profile {...mockProps} />
             );
 
+            console.log('After rendering component:', useStateMock.name); // Log the value after rendering
+
             expect(screen.getByText('Back')).toBeInTheDocument();
             expect(screen.getByText('Save')).toBeInTheDocument();
         });
+
+        it('Displays preferences on smaller screens', () => {
+            // Mock the usestate hook editingPreference
+            useStateMock.mockReturnValueOnce([false, setState])
+            
+            // Mock the return value of useMediaQuery
+            useMediaQuery.mockReturnValue(false);
+
+            const { container } = render(
+                <Profile {...mockProps} />
+            );
+
+            const tableElement = container.querySelector('table');
+
+            expect(tableElement).toBeInTheDocument();
+            expect(screen.getByText('Edit Preferences')).toBeInTheDocument();
+        });
+
+        it('updates state when button is clicked', () => {
+
+            // Mock the usestate hook editingPreference
+            useStateMock.mockReturnValueOnce([false, setState])
+    
+            const { getByRole } = render(<Profile {...mockProps} />);
+    
+            // Assume your button is labeled "Edit Preferences"
+            const editButton = getByRole('button', { name: /edit preferences/i });
+            
+            act(() => {
+                fireEvent.click(editButton);
+            });
+    
+            // Assert that the setState function has been called with true, indicating a state update
+            expect(setState).toHaveBeenCalledWith(true);
+        });
+
+        it('Show correct Preferences', async () => {
+            // Mock the usestate hook editingPreference
+            useStateMock.mockReturnValueOnce([false, setState]);
+            
+
+            useStateMock.mockReturnValueOnce([mockProps.myPreferences, setState]);
+        
+            render(<Profile {...mockProps} />);
+
+            const tableBody = screen.getAllByRole('rowgroup'); // This assumes there's only one tbody in your component
+            const allRows = within(tableBody[1]).getAllByRole('row');
+            const allTds = within(allRows[0]).getAllByRole('cell');
+
+            for (let i = 0; i < allTds.length; i++) {
+                if (allTds[i].className === 'dontCare') {
+                    expect(i === 0 || i === 3 || i === 5).toBeTruthy();
+                } else if (allTds[i].className === 'dontWork') {
+                    expect(i === 1 || i === 4).toBeTruthy();
+                } else if (allTds[i].className === 'work') {
+                    expect(i === 2 || i === 6).toBeTruthy();
+                }
+            }
+        });        
     });
 });
