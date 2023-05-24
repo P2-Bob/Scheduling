@@ -47,9 +47,11 @@ export default function Schedule({ userSchedule, shiftName, users }) {
 
 	const { data: session } = useSession();
 	let foundUser = null;
+	//console.log(user);
     if (session) {
         foundUser = users.find(user => user.username === session.user.name);
     }
+	
 	
 	return (
 		<>
