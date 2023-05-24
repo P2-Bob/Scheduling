@@ -149,5 +149,20 @@ describe('Schedule', () => {
             expect(screen.getByText('Sun')).toBeInTheDocument();
             expect(screen.getByText('Edit Preferences')).toBeInTheDocument();
         });
+
+        it('Displays preferences when editing true', () => {
+            // Mock the usestate hook editingPreference
+            useStateMock.mockReturnValueOnce([true, jest.fn()])
+            
+            // Mock the return value of useMediaQuery
+            useMediaQuery.mockReturnValue(true);
+
+            render(
+                <Profile {...mockProps} />
+            );
+
+            expect(screen.getByText('Back')).toBeInTheDocument();
+            expect(screen.getByText('Save')).toBeInTheDocument();
+        });
     });
 });
