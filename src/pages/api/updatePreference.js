@@ -11,8 +11,6 @@ export default async function handler(req, res) {
         value: [session.user.name]
     });
 
-    if (result[0].role == "admin") {
-
         if (req.method !== "POST") {
             res.status(405).json({ error: "Method not allowed" });
             return;
@@ -34,8 +32,5 @@ export default async function handler(req, res) {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-    } else {
-        res.status(401).json({ error: "Not authenticated" });
-    }
 
 }
