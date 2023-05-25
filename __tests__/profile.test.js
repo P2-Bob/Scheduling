@@ -217,7 +217,6 @@ describe('Schedule', () => {
             // Mock the usestate hook editingPreference
             useStateMock.mockReturnValueOnce([false, setState]);
             
-
             useStateMock.mockReturnValueOnce([mockProps.myPreferences, setState]);
         
             render(<Profile {...mockProps} />);
