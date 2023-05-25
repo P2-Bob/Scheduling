@@ -12,3 +12,16 @@ One of the highlights of this project is its elegant, user-friendly design. The 
 
 Before you start using this application, make sure you have Node.js and npm installed on your system as these are necessary to run JavaScript projects. You can then clone the project and install the necessary dependencies using npm:
 
+git clone https://github.com/P2-Bob/scheduling.git
+cd project
+npm install
+
+After installing the dependencies, you can start the application with:
+
+npm run dev
+
+The application will be available at `localhost:3000`.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
