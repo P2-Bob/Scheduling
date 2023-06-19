@@ -26,25 +26,6 @@ let bestUnavailableEmployees = {
 	"Sunday": [],
 }
 
-const employess = async (query) => {
-	const value = [];
-
-	const pool = mysql.createPool({
-		host: "10.92.0.176",
-		port: "3306",
-		user: "root",
-		password: "password",
-		database: "P2-Bob",
-	}).promise();
-
-	try {
-		const [results] = await pool.query(query, value);
-		pool.end();
-		return results;
-	} catch (error) {
-		throw Error(error.message);
-	}
-}
 
 const randomEmployee = (amountOfWorkers, worker, youthEmployees, schedule, day, shift) => {
 	let pickEmployee = [];
