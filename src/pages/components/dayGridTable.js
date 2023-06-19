@@ -39,7 +39,7 @@ const DayGridTable = ({schedule, shiftName}) => {
 
     // Add useEffect to update the dayGrid when displayedMonth or displayedYear changes
     useEffect(() => {
-        setDayGrid(generateDayGrid(displayedMonth, displayedYear));
+        setDayGrid(generateDayGrid());
     }, [displayedMonth, displayedYear]);
 
     const generateDayGrid = () => {

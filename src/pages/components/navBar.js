@@ -85,9 +85,6 @@ const Navbar = ({ user }) => {
                     <Link href="/schedule">
                         Work Schedule
                     </Link>
-                    <Link href="/admin">
-                        Admin
-                    </Link>
                     <Link href="/profile">
                         Profile
                     </Link>
