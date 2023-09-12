@@ -113,8 +113,10 @@ const sameEmployeeCheckShift = (pickEmployee, amountOfWorkersCounter, worker) =>
 		let tempCheck = 0;
 		for (let sameEmployeeCheckInterval = 1; sameEmployeeCheckInterval < amountOfWorkers; sameEmployeeCheckInterval++) {
 			if (pickEmployee[amountOfWorkersCounter] === pickEmployee[amountOfWorkersCounter - sameEmployeeCheckInterval]) {
+				//console.log("hey", pickEmployee[amountOfWorkersCounter], pickEmployee[amountOfWorkersCounter - sameEmployeeCheckInterval])
 				tempCheck++;
 				pickEmployee[amountOfWorkersCounter] = worker[Math.floor(Math.random() * worker.length)].username;
+				console.log
 				sameEmployeeCheckInterval++;
 			}
 			if (recursionCount > 20) {
@@ -357,6 +359,7 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 				tempSwap = bestSchedule[day][shift];
 				let randomEmployeePicker = Math.floor(Math.random() * amountOfWorkers);
 				pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+				console.log("hey", pickEmployee)
 				let worker = null;
 				let validCount = 0;
 				let validEmployee = false;
@@ -365,6 +368,7 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 					validEmployee = false;
 					if ((shift === '6-14' || shift === '14-22') && day !== 'Saturday' && day !== 'Sunday') {
 						pickEmployee = employees[Math.floor(Math.random() * employees.length)].username;
+						console.log("hey1", pickEmployee)
 					} else {
 						if (shift === '17-22') {
 							let temprandom = Math.floor(Math.random() * 2);
@@ -402,7 +406,11 @@ const randomEmployeeSwap = (amountOfWorkers, employees, youthEmployees, preferen
 						worker = youthEmployees;
 					} else { worker = employees; }
 
+					console.log("hey2", pickEmployee)
+
 					validEmployee = sameEmployeeCheckShift(pickEmployee, 1, worker);
+
+					console.log("hey3", validEmployee)
 
 					if (bestUnavailableEmployees[day].includes(pickEmployee)) {
 						validCount++;
@@ -448,26 +456,30 @@ const generateSchedule = async (employees, youthEmployees, preference) => {
 		}
 		count++;
 	}
-	console.log("This is the fittest schedule:", schedule);
+	//console.log("This is the fittest schedule:", schedule);
 	console.log("Total value:", fitnessValue);
 	console.log("Population:", count);
 
+	
 	let swappedSchedule = _.cloneDeep(bestSchedule);
 	let swappedFitnessValue = 0;
-
+	
+	
+	
 	let swapTries = 0;
+	console.log("hey", swappedFitnessValue, fitnessValue)
 	while (swappedFitnessValue < fitnessValue + 101) {
 		swappedSchedule = _.cloneDeep(bestSchedule);
-
 		swappedSchedule = randomEmployeeSwap(amountOfWorkers, employees, youthEmployees, preference, bestSchedule, swappedSchedule);
+		console.log("hey1", swappedFitnessValue, fitnessValue)
 		swappedFitnessValue = fitness(swappedSchedule, employees, youthEmployees, preference);
-
+		
 		swapTries++;
 		if (swapTries > 1000000) {
 			swappedSchedule = bestSchedule;
 			break;
 		}
-
+		
 	}
 	console.log("Tries:", swapTries);
 	console.log("Total value:", fitnessValue);

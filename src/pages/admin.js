@@ -16,7 +16,7 @@ export async function getServerSideProps(ctx) {
     if (session) {
         // Fetch data from database
         const result = await executeQuery({
-            query: 'SELECT * FROM users WHERE username = ?',
+            query: 'SELECT * FROM users WHERE username = $1', // MYSQL uses ? and Postgres uses $1
             value: [session.user.name]
         })
 

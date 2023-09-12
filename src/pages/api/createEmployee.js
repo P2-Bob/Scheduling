@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     // check if user is an admin
     const result = await executeQuery({
-        query: 'SELECT * FROM users WHERE username = ?',
+        query: 'SELECT * FROM users WHERE username = $1', // MYSQL uses ? and Postgres uses $1
         value: [session.user.name]
     });
 
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
         try {
             await executeQuery({
-                query: 'INSERT INTO users (username, password, name, role, age, department_id) VALUES (?, ?, ?, ?, ?, ?)',
+                query: 'INSERT INTO users (username, password, name, role, age, department_id) VALUES ($1, $2, $3, $4, $5, $6)', // MYSQL uses ? and Postgres uses $1, $2 etc
                 value: [username, password, name, role, age, department_id]
             });
             res.status(200).json({ result: "User created" });

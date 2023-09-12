@@ -15,7 +15,7 @@ export async function getServerSideProps(ctx) {
     if (session) {
         // Fetch data from database
         const result = await executeQuery({
-            query: 'SELECT * FROM users WHERE username = ?',
+            query: 'SELECT * FROM users WHERE username = $1', // MYSQL uses ? and Postgres uses $1
             value: [session.user.name]
         })
 
@@ -25,12 +25,12 @@ export async function getServerSideProps(ctx) {
         })
 
         const mySchedule = await executeQuery({
-            query: 'SELECT * FROM schedule WHERE username = ?',
+            query: 'SELECT * FROM schedule WHERE username = $1', // MYSQL uses ? and Postgres uses $1
             value: [session.user.name]
         })
 
         const preferences = await executeQuery({
-            query: 'SELECT * FROM preference WHERE username = ?',
+            query: 'SELECT * FROM preference WHERE username = $1', // MYSQL uses ? and Postgres uses $1
             value: [session.user.name]
         })
 

@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     // check if user is an admin
     const result = await executeQuery({
-        query: 'SELECT * FROM users WHERE username = ?',
+        query: 'SELECT * FROM users WHERE username = $1', // MYSQL uses ? and Postgres uses $1
         value: [session.user.name]
     });
 
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
         try {
             const result = await executeQuery({
-                query: 'UPDATE users SET username = ?, name = ?, role = ?, age = ?, department_id = ? WHERE username = ?',
+                query: 'UPDATE users SET username = $1, name = $2, role = $3, age = $4, department_id = $5 WHERE username = $6', // MYSQL uses ? and Postgres uses $1, $2 etc
                 value: [username, name, role, age, department_id, editingEmployee]
             });
             res.status(200).json({ result: "User Succesfully Updated" });

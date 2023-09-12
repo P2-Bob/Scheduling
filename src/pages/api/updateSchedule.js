@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     // check if user is an admin
     const result = await executeQuery({
-        query: 'SELECT * FROM users WHERE username = ?',
+        query: 'SELECT * FROM users WHERE username = $1', // MYSQL uses ? and Postgres uses $1
         value: [session.user.name]
     });
 
@@ -27,8 +27,9 @@ export default async function handler(req, res) {
                 query: 'SELECT * FROM preference',
                 value: []
             });
-
+            //console.log("look", employees, youthEmployees, preference);
             const { schedule, fitnessValue, count } = await generateSchedule(employees, youthEmployees, preference);
+            console.log("Schedule", schedule);
             let userSchedule = [];
             let shift_id = null;
             
@@ -60,7 +61,9 @@ export default async function handler(req, res) {
                     const users = dayShifts[shift];
                     if (shift === "6-14")shift_id = 1;
                     if (shift === "14-22")shift_id = 2;
-                    if (shift === "17-22")shift_id = 3;
+                    if (shift === "17-22") shift_id = 3;
+                    console.log("Type of users:", typeof users);
+                    console.log("Value of users:", users);
                     users.forEach((user) => {
                         userSchedule.push({ username: user, work_day: day, shift_id: shift_id, date: date.toISOString().substring(0,10)});
                     });
@@ -69,7 +72,7 @@ export default async function handler(req, res) {
             
             userSchedule.forEach(async (user) => {
                 await executeQuery({
-                    query: 'INSERT INTO schedule (username, shift_id, work_day, date) VALUES (?, ?, ?, ?)',
+                    query: 'INSERT INTO schedule (username, shift_id, work_day, date) VALUES ($1, $2, $3, $4)', // MYSQL uses ? and Postgres uses $1, $2 etc
                     value: [user.username, user.shift_id, user.work_day, user.date]
                 });
             });

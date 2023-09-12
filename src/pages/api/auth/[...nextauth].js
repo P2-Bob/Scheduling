@@ -27,10 +27,10 @@ export const authOptions = {
             console.log(credentials.username, credentials.password)
             try {
                 const result = await executeQuery({
-                    query: 'SELECT * FROM users WHERE username = ? AND password = ?',
+                    query: 'SELECT * FROM users WHERE username = $1 AND password = $2', // MYSQL uses ? and Postgres uses $1
                     value: [credentials.username, credentials.password]
                 });
-                console.log(result)
+                console.log("auth", result)
                 if (result.length > 0) {
                     const user = { id: result[0].employee_id, name: result[0].username }
                     return user;
